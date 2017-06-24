@@ -1,9 +1,14 @@
 import java.util.Random;
 
 public class killCalc{
-	public boolean killCalculator(int att, int def, int aSpeed, int dSpeed){
+	public boolean killCalculator(Entity attacker, Entity defender){
+		int attackVal = attacker.getAttack();
+		int defenseVal = defender.getDefense();
+		int aSpeed = attacker.getSpeed();
+		int dSpeed = defender.getSpeed();
+		
 		boolean killed = false;
-		int attackDiff = att - def;
+		int attackDiff = attackVal - defenseVal;
 		int speedDiff = dSpeed - aSpeed;
 		double killChance = 0;
 		
