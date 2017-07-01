@@ -1,36 +1,48 @@
-public class tile{
-	private int x;
-	private int y;
+import java.util.Random;
+
+public class Tile{
+	
+	private int xPos;
+	private int yPos;
 	private String terrainType;
 	private int totalFood;
 	private int foodRegen;
+	Random rand = new Random();
 	
-	public tile(){
+	public Tile(){
+		System.out.print("Tile()");
 	}
 	
-	public tile(int id){
-		
+	public Tile(int x, int y, int iTerrainType){
+		xPos = x;
+		yPos = y;
+		terrainType = Integer.toString(iTerrainType); 
+		totalFood = rand.nextInt(10);
+		foodRegen = 1;
 	}
 	
-	public tile(Object obj){
-		this.x = x;
-		this.y = y;
+	public Tile(Object obj){
+		this.xPos = xPos;
+		this.yPos = yPos;
 		this.terrainType = terrainType;
 		this.totalFood = totalFood;
 		this.foodRegen = foodRegen;
 	}
 	
-	public int getX(){
-		return x;
+	public int getXPos(){
+		return xPos;
 	}
-	public int getY(){
-		return y;
+	public int getYPos(){
+		return yPos;
 	}
 	public String getTerrainType(){
 		return terrainType;
 	}
 	public int getTotalFood(){
 		return totalFood;
+	}
+	public int getFoodRegen(){
+		return foodRegen;
 	}
 	
 }

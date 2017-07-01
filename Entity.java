@@ -23,6 +23,10 @@ public class Entity {
 	private boolean sex;
 
 	Random rand = new Random();
+	
+	public Entity(){
+
+	}
 
 	public Entity(int id){
 		name = Integer.toString(id);
@@ -46,10 +50,6 @@ public class Entity {
 		this.hunger = hunger;
 		this.size = size;
 		this.sex = sex; 
-	}
-
-	public Entity(){
-
 	}
 
 	public String getName(){ 

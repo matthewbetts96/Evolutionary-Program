@@ -13,27 +13,31 @@
 import java.util.*;
 import java.util.Scanner;
 import java.util.Random;
-import java.io.*;
-import java.io.File;
 import java.awt.*;      
 import java.util.List;
 import java.awt.event.*;
 import javax.swing.*;
+import java.io.*;
+
 
 public class main extends JFrame {
 	
-	public static final int CANVAS_WIDTH  = 801;
+	public static final int CANVAS_WIDTH  = 800;
 	public static final int CANVAS_HEIGHT = 800;
-	public static final int TILE_SIZE = 4; //This is both for length and width 
+	public static final int TILE_SIZE = 4; //This is both for pixel length and width of each tile
+	public static final int rand = new Random().nextInt(1000);
 	
 	private DrawCanvas canvas;
 	private List noiseNumbers = new ArrayList<Integer>();
+	public static LinkedList<Entity> entities = new LinkedList<Entity>();
+	public static LinkedList<Tile> tiles = new LinkedList<Tile>();
 	
 	public static void main (String[] args){
+		//Generate the noise file 
+		generateNoise noise = new generateNoise();
+		noise.generateNoise(rand);
 		
 		Scanner sc = new Scanner(System.in);
-		LinkedList<Entity> entities = new LinkedList<Entity>();
-		
 		System.out.print("Enter number of entities to generate: ");
 		int entNum = sc.nextInt();
 		System.out.print("Enter number of generations to run: ");
@@ -45,45 +49,56 @@ public class main extends JFrame {
 			entities.add(creature);
 		}
 		
+		//Generates the map from noise.png in a seperate thread
 		SwingUtilities.invokeLater(new Runnable() {
 			@Override
 			public void run() {
 				new main();
 			}
 		});
+		getTiles object = new getTiles();
+		tiles = object.getTileArray(TILE_SIZE);
+		System.out.println(tiles.size());
+		System.out.println("XPos " + tiles.get(0).getXPos());
+		System.out.println("YPos " +tiles.get(0).getYPos());
+		System.out.println("Terrain Type " + tiles.get(0).getTerrainType());
+		System.out.println("XPos " + tiles.get(1).getXPos());
+		System.out.println("YPos " +tiles.get(1).getYPos());
+		System.out.println("Terrain Type " + tiles.get(1).getTerrainType());
+		System.out.println("XPos " + tiles.get(2).getXPos());
+		System.out.println("YPos " +tiles.get(2).getYPos());
+		System.out.println("Terrain Type " + tiles.get(2).getTerrainType());
 	}
 	
-	public main(){	
+	public main(){		
 		generateNoise noise = new generateNoise();
-		noiseNumbers = noise.generateNoise();
-		
+		noiseNumbers = noise.getColours();
 		canvas = new DrawCanvas();    
 		canvas.setPreferredSize(new Dimension(CANVAS_WIDTH, CANVAS_HEIGHT));
 		setContentPane(canvas);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);   
 		pack();              
 		setTitle("Evolutionary Game");  
-		setVisible(true);    
+		setVisible(true);  
 	}
 	
 	private class DrawCanvas extends JPanel {
 		@Override
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);    
-			setBackground(Color.WHITE);  
+			setBackground(Color.WHITE);
 			int x = 0;
 			int y = 0;
 			int pos = 0;
 			int colourValue = 0;
-			
 			for(int i = 0; i < 800; i = i + TILE_SIZE){
 				for(int j = 0; j < 800; j = j + TILE_SIZE){
 					colourValue = (int)noiseNumbers.get(pos);
-					if(colourValue == 0){
+					if(colourValue == 3){
 						g.setColor(Color.BLUE);
-					} else if(colourValue == 1){
-						g.setColor(Color.GREEN);
 					} else if(colourValue == 2){
+						g.setColor(Color.GREEN);
+					} else if(colourValue == 1){
 						g.setColor(Color.GRAY);
 					} else {
 						g.setColor(Color.BLACK);
@@ -93,16 +108,6 @@ public class main extends JFrame {
 					g.drawRect(x,y,TILE_SIZE,TILE_SIZE);
 					pos = pos + 1;
 					x = x + TILE_SIZE;
-				}
-				colourValue = (int)noiseNumbers.get(pos);
-				if(colourValue == 0){
-					g.setColor(Color.BLUE);
-				} else if(colourValue == 1){
-					g.setColor(Color.GREEN);
-				} else if(colourValue == 2){
-					g.setColor(Color.lightGray);
-				} else {
-					g.setColor(Color.BLACK);
 				}
 				y = y + TILE_SIZE;
 				x = 0;
