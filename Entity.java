@@ -12,7 +12,7 @@ import java.util.Random;
 import java.util.*;
 
 public class Entity {
-	private String name;
+	private int id;
 	private int x;
 	private int y;
 	private int attack;
@@ -28,10 +28,10 @@ public class Entity {
 
 	}
 
-	public Entity(int id){
-		name = Integer.toString(id);
-		x = 0;
-		y = 0;
+	public Entity(int idx){
+		id = idx;
+		x = 4 * rand.nextInt(200);
+		y = 4 * rand.nextInt(200);
 		attack = rand.nextInt(30);
 		defense = rand.nextInt(20);
 		speed = rand.nextInt(10) + 1; //Minimum 1 speed
@@ -41,7 +41,7 @@ public class Entity {
 	}
 
 	public Entity(Object obj){
-		this.name = name;
+		this.id = id;
 		this.x = x;
 		this.y = y;
 		this.attack = attack;
@@ -52,8 +52,8 @@ public class Entity {
 		this.sex = sex; 
 	}
 
-	public String getName(){ 
-		return name;
+	public int getID(){ 
+		return id;
 	}
 
 	public int getXpos(){

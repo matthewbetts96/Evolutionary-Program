@@ -28,6 +28,7 @@ public class main extends JFrame {
 	public static final int rand = new Random().nextInt(1000);
 	
 	private DrawCanvas canvas;
+	private Sprites sprite;
 	private List noiseNumbers = new ArrayList<Integer>();
 	public static LinkedList<Entity> entities = new LinkedList<Entity>();
 	public static LinkedList<Tile> tiles = new LinkedList<Tile>();
@@ -58,16 +59,9 @@ public class main extends JFrame {
 		});
 		getTiles object = new getTiles();
 		tiles = object.getTileArray(TILE_SIZE);
-		System.out.println(tiles.size());
-		System.out.println("XPos " + tiles.get(0).getXPos());
-		System.out.println("YPos " +tiles.get(0).getYPos());
-		System.out.println("Terrain Type " + tiles.get(0).getTerrainType());
-		System.out.println("XPos " + tiles.get(1).getXPos());
-		System.out.println("YPos " +tiles.get(1).getYPos());
-		System.out.println("Terrain Type " + tiles.get(1).getTerrainType());
-		System.out.println("XPos " + tiles.get(2).getXPos());
-		System.out.println("YPos " +tiles.get(2).getYPos());
-		System.out.println("Terrain Type " + tiles.get(2).getTerrainType());
+		//we now have the tiles and all of the data within them
+		//System.out.println(tiles.size());
+		
 	}
 	
 	public main(){		
@@ -81,7 +75,7 @@ public class main extends JFrame {
 		setTitle("Evolutionary Game");  
 		setVisible(true);  
 	}
-	
+
 	private class DrawCanvas extends JPanel {
 		@Override
 		public void paintComponent(Graphics g) {
@@ -111,6 +105,11 @@ public class main extends JFrame {
 				}
 				y = y + TILE_SIZE;
 				x = 0;
+			}
+			//Should update the entities
+			for(int i = 0; i < entities.size(); i++){
+				sprite = new Sprites(entities.get(i).getID(),entities.get(i).getXpos(),entities.get(i).getYpos(),4,4, Color.RED);
+				sprite.paint(g);
 			}
 		}
 	}
