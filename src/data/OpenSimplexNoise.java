@@ -1,3 +1,5 @@
+package data;
+
 /*
  * OpenSimplex Noise in Java.
  * by Kurt Spencer
