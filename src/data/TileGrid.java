@@ -8,8 +8,12 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import helpers.config;
+
 public class TileGrid {
 	public Tile[][] map;
+	
+	private final int TILE_SIZE = config.getTilesize(); 
 	
 	public TileGrid() {
 		BufferedImage image = null;
@@ -18,21 +22,22 @@ public class TileGrid {
             image = ImageIO.read(file);
         } catch (IOException ex){
             System.out.println("IOException caught -generateNoise -getColours");
-        }
-        
-		map = new Tile[320][240];
+        }        
+		map = new Tile[config.getNoisewidth()][config.getNoiseheight()]; 
 		for(int i = 0; i < map.length; i++) {
 			for(int j = 0; j < map[i].length; j++) {
 				int clr = image.getRGB(i,j);
 				int red   = (clr & 0x00ff0000) >> 16;
 				if(red > 170){
-					map[i][j] = new Tile(i * 4, j * 4, 4, 4, TileType.Mountains); 	//Mountains
-	            } else if(red > 125){
-	            	map[i][j] = new Tile(i * 4, j * 4, 4, 4, TileType.Dirt);	//Highlands
-				} else if(red > 75){
-					map[i][j] = new Tile(i * 4, j * 4, 4, 4, TileType.Grass);	//Grasslands
+					map[i][j] = new Tile(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, TileType.Water, 0, 0);
+	            } else if(red > 160){
+	            	map[i][j] = new Tile(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, TileType.Sand, 20, 0.1);	
+	            } else if(red > 95){
+	            	map[i][j] = new Tile(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, TileType.Grass,100, 0.5);	
+				} else if(red > 65){
+					map[i][j] = new Tile(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, TileType.Dirt, 50, 0.25);	
 	            } else {
-	            	map[i][j] = new Tile(i * 4, j * 4, 4, 4, TileType.Water);	//Water
+	            	map[i][j] = new Tile(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, TileType.Mountains, 0, 0);	
 	            }		
 			}
 		}
@@ -47,4 +52,11 @@ public class TileGrid {
 		}
 	}
 	
+	public void SetTile(int xCoord, int yCoord, TileType type, int totalFood, double foodRegen) {
+		map[xCoord][yCoord] = new Tile(xCoord * TILE_SIZE, yCoord * TILE_SIZE, TILE_SIZE, TILE_SIZE, type, totalFood, foodRegen);
+	}
+	
+	public Tile GetTile(int xCoord, int yCoord) {
+		return map[xCoord][yCoord];
+	}
 }

@@ -1,10 +1,14 @@
 package helpers;
 
+import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_PROJECTION;
 import static org.lwjgl.opengl.GL11.GL_QUADS;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glBegin;
+import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glLoadIdentity;
@@ -18,6 +22,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 
@@ -32,9 +37,9 @@ import data.OpenSimplexNoise;
 
 public class Artist {
 	
-	private static final int WIDTH = 1280;
-	private static final int HEIGHT = 960;
-	private static final int TILE_SIZE = 4;
+	private static final int WIDTH = config.getWidth();
+	private static final int HEIGHT = config.getHeight();
+	private static final int TILE_SIZE = config.getTilesize();
 	private static final double FEATURE_SIZE = 24;
 	
 	public static void BeginSession() {
@@ -51,7 +56,10 @@ public class Artist {
 		glOrtho(0, WIDTH, HEIGHT, 0 , 1, -1);
 		glMatrixMode(GL_MODELVIEW);
 		glEnable(GL_TEXTURE_2D);
-		generateNoise(420);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		int rand = new Random().nextInt(1000);
+		generateNoise(rand);
 	}
 	
 	public static void generateNoise(int rand) {
@@ -130,5 +138,4 @@ public class Artist {
 		tex = LoadTexture("res/" + name + ".png", "PNG");		
 		return tex;
 	}
-	
 }
