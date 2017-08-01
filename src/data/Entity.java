@@ -6,12 +6,13 @@ import static helpers.Clock.Delta;
 import org.newdawn.slick.opengl.Texture;
 
 public class Entity {
-	private int width, height, ySpeed, xSpeed;
+	private int width, height, origYSpeed, origXSpeed;
+	private double ySpeed, xSpeed;
 	private float x, y;
 	private Texture texture;
 	private boolean first = true;
 	
-	public Entity(Texture texture, int x, int y, int width, int height, int xSpeed, int ySpeed) {
+	public Entity(Texture texture, int x, int y, int width, int height, int origYSpeed, int origXSpeed, double xSpeed, double ySpeed) {
 		this.texture = texture;
 		this.x = x;
 		this.y = y;
@@ -19,6 +20,8 @@ public class Entity {
 		this.height = height;
 		this.xSpeed = xSpeed;
 		this.ySpeed = ySpeed;
+		this.origXSpeed = origXSpeed;
+		this.origYSpeed= origYSpeed;
 	}
 	
 	public void Draw() {
@@ -50,6 +53,38 @@ public class Entity {
 		this.height = height;
 	}
 
+	public int getOrigYSpeed() {
+		return origYSpeed;
+	}
+
+	public void setOrigYSpeed(int origYSpeed) {
+		this.origYSpeed = origYSpeed;
+	}
+
+	public int getOrigXSpeed() {
+		return origXSpeed;
+	}
+
+	public void setOrigXSpeed(int origXSpeed) {
+		this.origXSpeed = origXSpeed;
+	}
+
+	public double getySpeed() {
+		return ySpeed;
+	}
+
+	public void setySpeed(double ySpeed) {
+		this.ySpeed = ySpeed;
+	}
+
+	public double getxSpeed() {
+		return xSpeed;
+	}
+
+	public void setxSpeed(double xSpeed) {
+		this.xSpeed = xSpeed;
+	}
+
 	public float getX() {
 		return x;
 	}
@@ -64,22 +99,6 @@ public class Entity {
 
 	public void setY(float y) {
 		this.y = y;
-	}
-
-	public float getYSpeed() {
-		return ySpeed;
-	}
-	
-	public float getXSpeed() {
-		return xSpeed;
-	}
-
-	public void setXSpeed(int xSpeed) {
-		this.xSpeed = xSpeed;
-	}
-	
-	public void setYSpeed(int ySpeed) {
-		this.ySpeed = ySpeed;
 	}
 
 	public Texture getTexture() {
@@ -97,5 +116,7 @@ public class Entity {
 	public void setFirst(boolean first) {
 		this.first = first;
 	}
+
+	
 	
 }

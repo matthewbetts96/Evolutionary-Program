@@ -7,9 +7,9 @@ import org.lwjgl.opengl.Display;
 import helpers.Clock;
 import helpers.config;
 
-public class Boot {
+public class Run {
 	
-	public Boot() {
+	public Run() {
 		BeginSession();
 		
 		TileGrid grid = new TileGrid();
@@ -21,18 +21,16 @@ public class Boot {
 		}
 		
 		while(!Display.isCloseRequested()) {
-
 			Clock.update();
 			grid.Draw();
 			spawnEntity.Update(grid);
 			Display.update();
-			Display.sync(60); //in fps
+			Display.sync(60); 
 		}
-		
 		Display.destroy();
 	}
 	
 	public static void main(String[] args) {
-		new Boot();
+		new Run();
 	}
 }

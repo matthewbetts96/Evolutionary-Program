@@ -1,6 +1,9 @@
 package helpers;
 
+import java.util.ArrayList;
 import java.util.Random;
+
+import static helpers.Artist.*;
 
 import data.Entity;
 import data.TileGrid;
@@ -8,63 +11,46 @@ import data.TileType;
 
 public class AI {
 	
-	public static TileGrid grid = new TileGrid();
 	public static Random random = new Random();
 	
-	public static void doAIStuff(Entity e) {
-		int x = (int) e.getX()/config.getTilesize(); //Gets x, y coords
-		int y = (int) e.getY()/config.getTilesize();
-		int XSpeed = (int) e.getXSpeed();
-		int YSpeed = (int) e.getYSpeed();
-		checkBoundaries(e, x, y, XSpeed, YSpeed);
-		noImpassableTiles(e, x, y, XSpeed, YSpeed);
-		checkSurroundingTiles(e, x, y);
+	public static void doAIStuff(Entity e, TileGrid grid, int x, int y) {
+		double XSpeed = e.getxSpeed();
+		double YSpeed = e.getySpeed();
+		noImpassableTiles(e, x, y, XSpeed, YSpeed, grid);
+		//checkSurroundingTiles(e, x, y, grid);
+		eatFood(x,y,grid);
 	}
 	
-	public static void noImpassableTiles(Entity e, int x, int y, int xSpeed, int ySpeed) {
+	//Stops entities moving on tiles that they shouldn't
+	public static void noImpassableTiles(Entity e, int x, int y, double xSpeed, double ySpeed, TileGrid grid) {
 		if(grid.GetTile(x,y).getType() == TileType.Mountains) {
-			e.setXSpeed(xSpeed * -1);
-			e.setYSpeed(ySpeed * -1);
+			e.setxSpeed(xSpeed * -1);
+			e.setySpeed(ySpeed * -1);
 		} else if(grid.GetTile(x,y).getType() == TileType.Water) {
-			e.setXSpeed(xSpeed * -1);
-			e.setYSpeed(ySpeed * -1);
-		}
-	}
-	
-	public static void checkBoundaries(Entity e, int x, int y, int xSpeed, int ySpeed) {
-		if(e.getX() < 1) {
-			e.setXSpeed(xSpeed * -1);
-			e.setYSpeed(ySpeed * -1);
-		} else if (e.getY() < 1){ 
-			e.setXSpeed(xSpeed * -1);
-			e.setYSpeed(ySpeed * -1);
-		} else if(e.getX() >= config.getWidth() - config.getTilesize()) {
-			e.setXSpeed(xSpeed * -1);
-			e.setYSpeed(ySpeed * -1);
-		} else if((e.getY() >= config.getHeight() - config.getTilesize())){
-			e.setXSpeed(xSpeed * -1);
-			e.setYSpeed(ySpeed * -1);
+			e.setxSpeed(xSpeed * -1);
+			e.setySpeed(ySpeed * -1);
 		}
 	}
 	
 	//this needs redoing
-	public static void checkSurroundingTiles(Entity e, int x, int y) {	
+	public static void checkSurroundingTiles(Entity e, int x, int y, TileGrid grid) {	
 		/*
 		 * e = the entity 
 		 * 
 		 * z1 z2 z3
 		 * z4 e  z5
 		 * z6 z7 z8  
+		 * 
 		 * */
-		int z1 = -1;
-		int z2 = -1;
-		int z3 = -1;
-		int z4 = -1;
-		int z5 = -1;
-		int z6 = -1;
-		int z7 = -1;
-		int z8 = -1;
-		System.out.println("x = "+ x + ". y =  " +y);
+		
+		double z1 = -1;
+		double z2 = -1;
+		double z3 = -1;
+		double z4 = -1;
+		double z5 = -1;
+		double z6 = -1;
+		double z7 = -1;
+		double z8 = -1;
 		//top middle
 		if(e.getY() > config.getTilesize()*2) {
 			z2 = grid.GetTile(x, y-1).getTotalFood();
@@ -98,8 +84,53 @@ public class AI {
 			z8 = grid.GetTile(x+1, y+1).getTotalFood();
 		}
 		
-		System.out.println(z1 + " " + z2 + " " + z3+ " " +z4+ " " +z5+ " " +z6+ " " +z7+ " " +z8);
-		System.out.println("___________________");
+		System.out.println(z1 + " " + z2 + " " + z3 + " " + z4 + " " + z5 + " " + z6 + " " + z7 + " " + z8);
+
+		
+
+		/* 
+						   x   |  y
+						------------
+		Up				-  0   | b  			
+		Down			-  0   |-b
+		Left 			- -a   | 0  
+		Right 			-  a   | 0
+		top-right 		-  Math.sqrt((a*a)+(b*b)   |-Math.sqrt((a*a)+(b*b)
+		bottom-right 	-  Math.sqrt((a*a)+(b*b)   | Math.sqrt((a*a)+(b*b)
+		top-left 		- -Math.sqrt((a*a)+(b*b)   |-Math.sqrt((a*a)+(b*b)
+		bottom-left 	- -Math.sqrt((a*a)+(b*b)   | Math.sqrt((a*a)+(b*b)
+
+		 */
+		
 	}
 	
+	public static void eatFood( int x, int y, TileGrid grid) {
+		grid.GetTile(x, y).setTotalFood(grid.GetTile(x, y).getTotalFood() - 1);
+	}
+	
+	//refreshes the food on a tile up to a maximum
+	public static void replenishFood(TileGrid grid) {
+		for(int i = 0; i < config.getWidth()/config.getTilesize(); i++) {
+			for(int j = 0; j < config.getHeight()/config.getTilesize(); j++) {
+				if(grid.GetTile(i, j).getType() != TileType.Mountains || grid.GetTile(i, j).getType() != TileType.Water) {
+					double food = grid.GetTile(i, j).getTotalFood();
+					if(food < 100) {
+						grid.GetTile(i, j).setTotalFood(grid.GetTile(i, j).getTotalFood() + grid.GetTile(i, j).getFoodRegen());
+						if(food > 85) {
+							grid.GetTile(i, j).setTexture(QuickLoad("grass"));
+							grid.GetTile(i, j).setType(TileType.Grass);
+						} else if(food <= 85 && food > 65) {
+							grid.GetTile(i, j).setTexture(QuickLoad("dirt"));
+							grid.GetTile(i, j).setType(TileType.Dirt);
+						} else if(food < 20) {
+							grid.GetTile(i, j).setTexture(QuickLoad("sand"));
+							grid.GetTile(i, j).setType(TileType.Sand);
+							grid.GetTile(i, j).setFoodRegen(0);
+						} 
+					}
+				}	
+			}
+		}
+	}	
 }
+
