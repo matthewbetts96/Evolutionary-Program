@@ -37,7 +37,7 @@ import data.OpenSimplexNoise;
 
 public class Artist {
 	
-	private static final int WIDTH = config.getWidth();
+	private static final int WIDTH = config.getWidth() + 200;
 	private static final int HEIGHT = config.getHeight();
 	private static final int TILE_SIZE = config.getTilesize();
 	private static final double FEATURE_SIZE = 24;
