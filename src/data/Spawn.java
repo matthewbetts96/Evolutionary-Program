@@ -1,60 +1,82 @@
 package data;
 
-import static helpers.Artist.QuickLoad;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
 
-import helpers.AI;
+import static helpers.AI.*;
 import helpers.config;
+import helpers.Clock;
 
 public class Spawn {
-	private ArrayList<Entity> entityList;
-	private boolean first = true;
-	private boolean isDead = false;
-	
+	private static ArrayList<Entity> entityList = new ArrayList<Entity>();
+	private int availableFood = 0;
+	private boolean isOutofBounds = false;
+	private boolean alreadyChangedDirection = false;
 	public Spawn() {
-		entityList = new ArrayList<Entity>();
+	
 	}
 	
-	//Need to add method to remove entities that are on titles that are mountain/water at the start of the sim
 	public void Update(TileGrid grid) {
-		for (Iterator<Entity> iterator = entityList.iterator(); iterator.hasNext();) {
-		    Entity e = iterator.next();
-		    int x = (int)e.getX()/config.getTilesize();
-			int y = (int)e.getY()/config.getTilesize();
-			isDead = AI.doAIStuff(e,grid,x,y);
-			e.Update();
-			e.Draw();
-			if(!first) {
-				AI.setNewDirection(e,grid, x, y);
-			}
-		    if(first) {
-				if(grid.GetTile(x, y).getType() == TileType.Mountains || grid.GetTile(x, y).getType() == TileType.Water) {
+		if(!Clock.isPaused() && Clock.ticksSinceGameStart() > 100) {
+			for (Iterator<Entity> iterator = entityList.iterator(); iterator.hasNext();) {
+			    Entity e = iterator.next();
+			    int xPos = (int)e.getX()/config.getTilesize();
+				int yPos = (int)e.getY()/config.getTilesize();
+				double xSpeed = e.getxSpeed();
+				double ySpeed = e.getySpeed();
+				
+				int entityCurrentHunger = e.getCurrentHunger();
+				int entityMaxHunger = e.getMaxHunger();
+				
+				/*	if the entity is at 90% of it's hunger meter, then eat, else don't.
+				 *  availableFood is a boolean to determine whether the entity starved if there was no food on the tile 
+				 *  we do another check to see if the entities hunger is < 0, if it is then it dies, else nothing
+				 *  happens and it tries again to eat next tick
+				 */
+				
+				if(entityCurrentHunger < entityMaxHunger*0.9) {
+					availableFood = checkFood(xPos,yPos,grid);
+					entityCurrentHunger = entityCurrentHunger + availableFood;
+					e.setCurrentHunger(entityCurrentHunger);
+				} 
+		
+				if(entityCurrentHunger < 0) {
 					iterator.remove();
-				}
-			} else if(isDead) {
-		    	iterator.remove();
-		    }
-		    isDead = false;
+				} else {
+					alreadyChangedDirection = noImpassableTiles(e, xPos, yPos, xSpeed, ySpeed, grid);
+			    	
+			    	if(!alreadyChangedDirection) {
+			    		//System.out.println("changeDirection");
+			    		isOutofBounds = setNewDirection(e,grid, xPos, yPos);
+			    		if(isOutofBounds) {
+					    	iterator.remove();
+					    }
+			    	}
+			    }
+				e.setCurrentHunger(entityCurrentHunger - 1);
+			    e.Update();
+				e.Draw();
+				isOutofBounds = false;
+			}
+			replenishFood(grid);
 		}
-		first = false;
-		AI.replenishFood(grid);
 	}
 	
+	//Add a standard entity with the standard texture, all other values are random
 	public void SpawnEntities() {
-		Random r = new Random();
-		int Low = -5;
-		int High = 5;
-		int x = r.nextInt(High-Low) + Low;
-		int y = r.nextInt(High-Low) + Low;	
+		Random i = new Random();
+		Random j = new Random();
+		entityList.add(new Entity(i, j));	
+	}
+	
+	
+	public static ArrayList<Entity> getEntityList() {
+		return entityList;
+	}
 
-		int xPos = r.nextInt(config.getHeight()-(config.getTilesize()*2));
-		int yPos = r.nextInt(config.getHeight()-(config.getTilesize()*2));
-		//new Entity(Texture, xPos, yPos, entity Height, entity Width, x speed, y speed, original x speed, original y speed)
-		//we keep the original speeds so we can refence them when changing the entities movement later on
-		entityList.add(new Entity(QuickLoad("Entity"), xPos, yPos, config.getTilesize(), config.getTilesize(), x, y, x, y));	
+	public static void setEntityList(ArrayList<Entity> entityList) {
+		Spawn.entityList = entityList;
 	}
 }
 

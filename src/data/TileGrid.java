@@ -11,7 +11,7 @@ import javax.imageio.ImageIO;
 import helpers.config;
 
 public class TileGrid {
-	public Tile[][] map;
+	public static Tile[][] map;
 	
 	private final int TILE_SIZE = config.getTilesize(); 
 	
@@ -21,33 +21,32 @@ public class TileGrid {
         try{
             image = ImageIO.read(file);
         } catch (IOException ex){
-            System.out.println("IOException caught -generateNoise -getColours");
+            System.out.println("Error. Failed to load noise.png.");
         }        
 		map = new Tile[config.getNoisewidth()][config.getNoiseheight()]; 
 		for(int i = 0; i < map.length; i++) {
 			for(int j = 0; j < map[i].length; j++) {
 				int clr = image.getRGB(i,j);
-				int red   = (clr & 0x00ff0000) >> 16;
-			
-				/* 
-				 * Fist two if/else if define the border of water
-				 * The rest define the map 
-				 */
+				int red = (clr & 0x00ff0000) >> 16;
 			
 				if(i == 0 || i == 1 || j == 0 || j == 1) {
-					map[i][j] = new Tile(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, TileType.Water, 1, 1);
-				} else if(i >= config.getNoiseheight() - 2 || j >= config.getNoiseheight() - 2) {
-					map[i][j] = new Tile(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, TileType.Water, 1, 1);
+					map[i][j] = new Tile(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, TileType.Mountains, -100, 0);
+				} else if(i >= config.getNoisewidth() - 2 || j >= config.getNoisewidth() - 2) {
+					map[i][j] = new Tile(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, TileType.Mountains, -100, 0);
+					/* 
+					 * Fist two if/else if define the border of water
+					 * The rest define the map 
+					 */
 				} else if(red > 170){
-					map[i][j] = new Tile(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, TileType.Water, 1, 1);
+					map[i][j] = new Tile(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, TileType.Water, 0, 0);
 	            } else if(red > 160){
-	            	map[i][j] = new Tile(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, TileType.Sand, 25, 0.5);	
+	            	map[i][j] = new Tile(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, TileType.Sand, 25, 2);	
 	            } else if(red > 95){
-	            	map[i][j] = new Tile(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, TileType.Grass, 100, 0.8);	
-				} else if(red > 65){
-					map[i][j] = new Tile(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, TileType.Highlands, 40, 0.5);	
+	            	map[i][j] = new Tile(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, TileType.Grass, 100, 4);	
+				} else if(red > 85){
+					map[i][j] = new Tile(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, TileType.Highlands, 40, 1);	
 	            } else {
-	            	map[i][j] = new Tile(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, TileType.Mountains, -10, 0);	
+	            	map[i][j] = new Tile(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, TileType.Mountains, 0, 0);	
 	            }		
 			}
 		}

@@ -1,11 +1,12 @@
 package data;
 
+import static helpers.General.BeginSession;
 
-import static helpers.Artist.BeginSession;
 import org.lwjgl.opengl.Display;
 
 import helpers.Clock;
 import helpers.config;
+import helpers.General;
 
 public class Run {
 	
@@ -20,17 +21,34 @@ public class Run {
 			spawnEntity.SpawnEntities();
 		}
 		
+		General.firstTimeCleanUp(grid);
+		
+		//This will run until the window is closed with the X button
 		while(!Display.isCloseRequested()) {
+			//Update the clock (update delta time)
 			Clock.update();
-			grid.Draw();
-			spawnEntity.Update(grid);
-			Display.update();
-			Display.sync(60); 
+			
+			//Draw/redraw the grid
+			if(!Clock.isPaused()) {
+				
+				//Redraw the grid, this seems super inefficient need to find a way to make this faster as 
+				//it is the current bottleneck with large maps and lots of entities
+				//current idea is to only update the tiles that the entities have interacted with 
+				grid.Draw();
+				
+				//Update entities on the grid
+				spawnEntity.Update(grid);
+				
+				//Update the display
+				Display.update();
+				Display.sync(60); 
+			}
 		}
 		Display.destroy();
 	}
 	
 	public static void main(String[] args) {
+
 		new Run();
 	}
 }

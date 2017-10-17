@@ -1,11 +1,13 @@
 package helpers;
+import helpers.config;
 
 import org.lwjgl.Sys;
 
 public class Clock {
-	private static boolean paused = false;
+	public static boolean paused = false;
 	public static long lastFrame, totalTime;
-	public static float d = 0, multiplier = 1;
+	public static float d = 0, multiplier = config.getStartmultiplier();
+	public static long ticksSinceGameStart = 0;
 	
 	public static long getTime() {
 		return Sys.getTime() * 1000 / Sys.getTimerResolution();
@@ -37,6 +39,11 @@ public class Clock {
 	public static void update() {
 		d = getDelta();
 		totalTime += d;
+		ticksSinceGameStart +=1;
+	}
+	
+	public static float ticksSinceGameStart() {
+		return ticksSinceGameStart;
 	}
 	
 	public static void ChangeMultiplier(int change) {
@@ -53,6 +60,10 @@ public class Clock {
 		} else {
 			paused = true;
 		}
+	}
+	
+	public static boolean isPaused() {
+		return paused;
 	}
 	
 }

@@ -7,11 +7,11 @@ import org.newdawn.slick.opengl.Texture;
 
 public class Tile {
 	private float x,y, width, height;
-	private double foodRegen, totalFood;
+	private int totalFood, foodRegen;
 	private Texture texture;
 	private TileType type;
 	
-	public Tile(float x, float y, float width, float height, TileType type, double totalFood, double foodRegen) {
+	public Tile(float x, float y, float width, float height, TileType type, int totalFood, int foodRegen) {
 		this.x = x;
 		this.y = y;
 		this.width = width;
@@ -74,21 +74,19 @@ public class Tile {
 		this.type = type;
 	}
 	
-	public double getFoodRegen() {
+	public int getFoodRegen() {
 		return foodRegen;
 	}
 
-	public void setFoodRegen(double foodRegen) {
+	public void setFoodRegen(int foodRegen) {
 		this.foodRegen = foodRegen;
 	}
 
-	public double getTotalFood() {
+	public int getTotalFood() {
 		return totalFood;
 	}
 
-	public void setTotalFood(double totalFood) {
+	public void setTotalFood(int totalFood) {
 		this.totalFood = totalFood;
 	}
-	
-	
 }
