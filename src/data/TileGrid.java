@@ -8,45 +8,46 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import helpers.config;
+import helpers.Config;
 
 public class TileGrid {
-	public static Tile[][] map;
-	
-	private final int TILE_SIZE = config.getTilesize(); 
+	private static Tile[][] map;
 	
 	public TileGrid() {
 		BufferedImage image = null;
-        File file = new File("noise.png");
-        try{
-            image = ImageIO.read(file);
-        } catch (IOException ex){
-            System.out.println("Error. Failed to load noise.png.");
-        }        
-		map = new Tile[config.getNoisewidth()][config.getNoiseheight()]; 
+	    File file = new File("noise.png");
+	    try{
+	        image = ImageIO.read(file);
+	    } catch (IOException ex){
+	        System.out.println("Error. Failed to load noise.png.");
+	    } 
+	    int noiseWidth = (int)Config.getWidth()/Config.getSize();
+	    int noiseHeight = (int)Config.getHeight()/Config.getSize();
+		map = new Tile[noiseWidth][noiseHeight]; 
+		
 		for(int i = 0; i < map.length; i++) {
 			for(int j = 0; j < map[i].length; j++) {
 				int clr = image.getRGB(i,j);
-				int red = (clr & 0x00ff0000) >> 16;
+				int colour = (clr & 0x00ff0000) >> 16;
 			
 				if(i == 0 || i == 1 || j == 0 || j == 1) {
-					map[i][j] = new Tile(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, TileType.Mountains, -100, 0);
-				} else if(i >= config.getNoisewidth() - 2 || j >= config.getNoisewidth() - 2) {
-					map[i][j] = new Tile(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, TileType.Mountains, -100, 0);
+					map[i][j] = new Tile(i * Config.getSize(), j * Config.getSize(), TileType.Border);
+				} else if(i >= noiseWidth - 2 || j >= noiseWidth - 2) {
+					map[i][j] = new Tile(i * Config.getSize(), j * Config.getSize(), TileType.Border);
 					/* 
-					 * Fist two if/else if define the border of water
+					 * Fist two if/else if define the border
 					 * The rest define the map 
 					 */
-				} else if(red > 170){
-					map[i][j] = new Tile(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, TileType.Water, 0, 0);
-	            } else if(red > 160){
-	            	map[i][j] = new Tile(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, TileType.Sand, 25, 2);	
-	            } else if(red > 95){
-	            	map[i][j] = new Tile(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, TileType.Grass, 100, 4);	
-				} else if(red > 85){
-					map[i][j] = new Tile(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, TileType.Highlands, 40, 1);	
+				} else if(colour > 170){
+					map[i][j] = new Tile(i * Config.getSize(), j * Config.getSize(), TileType.Water);
+	            } else if(colour > 160){
+	            	map[i][j] = new Tile(i * Config.getSize(), j * Config.getSize(), TileType.Sand);	
+	            } else if(colour > 95){
+	            	map[i][j] = new Tile(i * Config.getSize(), j * Config.getSize(), TileType.Grass);	
+				} else if(colour > 85){
+					map[i][j] = new Tile(i * Config.getSize(), j * Config.getSize(), TileType.Highlands);	
 	            } else {
-	            	map[i][j] = new Tile(i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE, TILE_SIZE, TileType.Mountains, 0, 0);	
+	            	map[i][j] = new Tile(i * Config.getSize(), j * Config.getSize(), TileType.Mountains);	
 	            }		
 			}
 		}
@@ -61,8 +62,8 @@ public class TileGrid {
 		}
 	}
 	
-	public void SetTile(int xCoord, int yCoord, TileType type, int totalFood, int foodRegen) {
-		map[xCoord][yCoord] = new Tile(xCoord * TILE_SIZE, yCoord * TILE_SIZE, TILE_SIZE, TILE_SIZE, type, totalFood, foodRegen);
+	public void SetTile(int xCoord, int yCoord, TileType type) {
+		map[xCoord][yCoord] = new Tile(xCoord * Config.getSize(), yCoord * Config.getSize(), type);
 	}
 	
 	public Tile GetTile(int xCoord, int yCoord) {

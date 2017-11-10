@@ -1,13 +1,13 @@
 package helpers;
-import helpers.config;
+import helpers.Config;
 
 import org.lwjgl.Sys;
 
 public class Clock {
-	public static boolean paused = false;
-	public static long lastFrame, totalTime;
-	public static float d = 0, multiplier = config.getStartmultiplier();
-	public static long ticksSinceGameStart = 0;
+	private static boolean paused = false;
+	private static long lastFrame, totalTime;
+	private static float d = 0, multiplier = Config.getStartMultiplier();
+	private static long ticksSinceGameStart = 0;
 	
 	public static long getTime() {
 		return Sys.getTime() * 1000 / Sys.getTimerResolution();
@@ -42,7 +42,7 @@ public class Clock {
 		ticksSinceGameStart +=1;
 	}
 	
-	public static float ticksSinceGameStart() {
+	public static long ticksSinceGameStart() {
 		return ticksSinceGameStart;
 	}
 	

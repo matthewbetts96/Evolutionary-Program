@@ -5,15 +5,13 @@ public class findBestTile implements Comparable<findBestTile>{
 	private int yCoord;
 	private int currentFood;
 	private String direction;
-	private TileType tileType;
 	
-	public findBestTile(int xCoord, int yCoord, int currentFood, String direction, TileType tileType){
+	public findBestTile(int xCoord, int yCoord, int currentFood, String direction){
 		super();
 		this.xCoord = xCoord;
 		this.yCoord = yCoord;
 		this.currentFood = currentFood;
 		this.direction = direction;
-		this.tileType = tileType;
 	}
 	
 	public int getxCoord() {
@@ -46,14 +44,6 @@ public class findBestTile implements Comparable<findBestTile>{
 	
 	public void setDirection(String direction) {
 		this.direction = direction;
-	}
-	
-	public TileType getTileType() {
-		return tileType;
-	}
-
-	public void setTileType(TileType tileType) {
-		this.tileType = tileType;
 	}
 
 	/*I really need someone to explain to 

@@ -2,89 +2,104 @@ package helpers;
 
 import static helpers.Artist.QuickLoad;
 
-import java.util.Random;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Random;
 
 import data.Entity;
+import data.Spawn;
 import data.TileGrid;
 import data.TileType;
 import data.findBestTile;
 
 public class AI {
-	
-	private static ArrayList<findBestTile> tilesEatenFrom = new ArrayList<findBestTile>();
-	
-	//Stops entities moving on tiles that they shouldn't
-	public static boolean noImpassableTiles(Entity e, int x, int y, double xSpeed, double ySpeed, TileGrid grid) {
-		try {
-			if(!grid.GetTile(x,y).getType().isTraversable()) {
-				e.setxSpeed(xSpeed * -1);
-				e.setySpeed(ySpeed * -1);
-				return true;
-			} 
-		} catch(Exception ex) {
-			ex.printStackTrace();
-			return true;
-			
-		}
-		return false;
-	}
-	
-	/* setNewDirection uses findBestTile and Comparable<> to find 
-	 * and return the best tile within the entities radius
-	 * https://www.mkyong.com/java/java-object-sorting-example-comparable-and-comparator/
-	 */
-	
-	public static boolean setNewDirection(Entity e, TileGrid grid, int x, int y) {
-	
+	public static void setNewDirection(Entity e, TileGrid grid, int x, int y) {
+		
 		int food = 0;
 		findBestTile[] surroundingTiles = new findBestTile[9];
 		
 		//We're setting this to -100 for now as it makes the game look like it's lagging
-		food = grid.GetTile(x, y).getTotalFood();
-		findBestTile z0 = new findBestTile(x, y, -100, "z0", grid.GetTile(x, y).getType());
+		try {
+			food = grid.GetTile(x, y).getTotalFood();
+		} catch(Exception ex) {
+			food = 0;
+		}
+		findBestTile z0 = new findBestTile(x, y, -100, "z0");
 		surroundingTiles[0] = z0;
 		
-		food = grid.GetTile(x + 1, y).getTotalFood();
-		findBestTile z1 = new findBestTile(x + 1, y, food, "z1", grid.GetTile(x + 1, y).getType());
+		try {
+			food = grid.GetTile(x + 1, y).getTotalFood();
+		} catch(Exception ex) {
+			food = 0;
+		}
+		findBestTile z1 = new findBestTile(x + 1, y, food, "z1");
 		surroundingTiles[1] = z1;
 		
-		food = grid.GetTile(x, y + 1).getTotalFood();
-		findBestTile z2 = new findBestTile(x, y + 1, food, "z2", grid.GetTile(x, y + 1).getType());
+		try {
+			food = grid.GetTile(x, y + 1).getTotalFood();
+		} catch(Exception ex) {
+			food = 0;
+		}
+		findBestTile z2 = new findBestTile(x, y + 1, food, "z2");
 		surroundingTiles[2] = z2;
 		
-		food = grid.GetTile(x + 1, y + 1).getTotalFood();
-		findBestTile z3 = new findBestTile(x + 1, y + 1, food, "z3", grid.GetTile(x + 1, y + 1).getType());
+		try {
+			food = grid.GetTile(x + 1, y + 1).getTotalFood();
+		} catch(Exception ex) {
+			food = 0;
+		}
+		findBestTile z3 = new findBestTile(x + 1, y + 1, food, "z3");
 		surroundingTiles[3] = z3;
 		
-		food = grid.GetTile(x - 1, y - 1).getTotalFood();
-		findBestTile z4 = new findBestTile(x - 1, y - 1, food, "z4", grid.GetTile(x - 1, y - 1).getType());
+		try {
+			food = grid.GetTile(x - 1, y - 1).getTotalFood();
+		} catch(Exception ex) {
+			food = 0;
+		}
+		findBestTile z4 = new findBestTile(x - 1, y - 1, food, "z4");
 		surroundingTiles[4] = z4;
 		
-		food = grid.GetTile(x, y - 1).getTotalFood();
-		findBestTile z5 = new findBestTile(x, y - 1, food, "z5", grid.GetTile(x, y - 1).getType());
+		try {
+			food = grid.GetTile(x, y - 1).getTotalFood();
+		} catch(Exception ex) {
+			food = 0;
+		}
+		findBestTile z5 = new findBestTile(x, y - 1, food, "z5");
 		surroundingTiles[5] = z5;
 		
-		food = grid.GetTile(x - 1, y).getTotalFood();;
-		findBestTile z6 = new findBestTile(x - 1, y, food, "z6", grid.GetTile(x - 1, y).getType());
+		try {
+			food = grid.GetTile(x - 1, y).getTotalFood();
+		} catch(Exception ex) {
+			food = 0;
+		}
+		findBestTile z6 = new findBestTile(x - 1, y, food, "z6");
 		surroundingTiles[6] = z6;
 		
-		food = grid.GetTile(x + 1, y - 1).getTotalFood();
-		findBestTile z7 = new findBestTile(x + 1, y - 1, food, "z7", grid.GetTile(x + 1, y - 1).getType());
+		try {
+			food = grid.GetTile(x + 1, y - 1).getTotalFood();
+		} catch(Exception ex) {
+			food = 0;
+		}
+		findBestTile z7 = new findBestTile(x + 1, y - 1, food, "z7");
 		surroundingTiles[7] = z7;
 		
-		food = grid.GetTile(x - 1, y + 1).getTotalFood();
-		findBestTile z8 = new findBestTile(x - 1, y + 1, food, "z8", grid.GetTile(x - 1, y + 1).getType());
+		try {
+			food = grid.GetTile(x - 1, y + 1).getTotalFood();
+		} catch(Exception ex) {
+			food = 0;
+		}
+		findBestTile z8 = new findBestTile(x - 1, y + 1, food, "z8");
 		surroundingTiles[8] = z8;
 		
 		//Sort tiles
 		Arrays.sort(surroundingTiles);
-			
+		
+		Random i = new Random();
+		int rand = i.nextInt(5);
 		String largestValue = "z1";
 		try {
-			largestValue = surroundingTiles[0].getDirection();
-			tilesEatenFrom.add(surroundingTiles[0]);
+			largestValue = surroundingTiles[rand].getDirection();
 		}catch(Exception ex) {
 			System.out.println("Error finding best tile.");
 		}
@@ -114,7 +129,7 @@ public class AI {
 			case "z0":
 				e.setxSpeed(0);
 				e.setySpeed(0);
-				break;
+			break;
 			case "z1":
 				e.setxSpeed(orgSpeed);
 				e.setySpeed(0);
@@ -148,70 +163,172 @@ public class AI {
 				e.setySpeed(orgSpeed);
 				break;
 		}
-		return false;
 	}
 	
-	public static int checkFood(int x, int y, TileGrid grid) {
+	public static ArrayList<Integer> crossBreed(Entity male, Entity female) {
+		ArrayList<Integer> childStats = new ArrayList<Integer>();
+		//Mix male and female stats and return the stats of the offspring
+		
+		
+		/* EXPERIMENTAL 
+		
+		//byte[] byteChildSpeed = XORbyteArrays(toByteArray(male.getOrigSpeed()), toByteArray(female.getOrigSpeed()));
+		
+		System.out.println(male.getIntelligence());
+		System.out.println(female.getIntelligence());
+		
+		byte[] ar1 = toByteArray(male.getIntelligence());
+		byte[] ar2 = toByteArray(female.getIntelligence());
+		
+		for(int i =0; i < ar1.length; i++) {
+			System.out.print(ar1[i]);
+		}
+		System.out.println();
+		for(int i =0; i < ar1.length; i++) {
+			System.out.print(ar2[i]);
+		}
+		
+		System.out.println();
+		//System.out.println(female.getOrigSpeed());
+		//System.out.println(toInt(byteChildSpeed));
+				 
+		//System.out.println((int)male.getOrigSpeed());
+		//System.out.println((int)female.getOrigSpeed());
+		//System.out.println(childSpeed);
+		
+		byte[] byteChildSpeed = XORbyteArrays(toByteArray(male.getIntelligence()), toByteArray(female.getIntelligence()));
+		System.out.println(byteChildSpeed);
+		System.out.println(toInt(byteChildSpeed));
+		System.out.println("_____________________");
+		
+		
+		*/
+		
+		//childStats.add();
+		
+		
+		return childStats;
+	}
+	
+	public static byte[] toByteArray(int value) {
+	    byte[] bytes = new byte[8];
+	    ByteBuffer.wrap(bytes).putInt(value);
+	    return bytes;
+	}
+	
+	public static byte[] toByteArray(double value) {
+	    byte[] bytes = new byte[8];
+	    ByteBuffer.wrap(bytes).putDouble(value);
+	    return bytes;
+	}
+	
+	public static double toDouble(byte[] bytes) {
+	    return ByteBuffer.wrap(bytes).getDouble();
+	}
+	
+	public static int toInt(byte[] bytes) {
+	    return ByteBuffer.wrap(bytes).getInt();
+	}
+	
+	public static byte[] XORbyteArrays(byte[] array_1, byte[] array_2) {
+		byte[] array_3 = new byte[8];
+
+		int i = 0;
+		for (byte b : array_1)
+		    array_3[i] = (byte) (b ^ array_2[i++]);
+		
+		return array_3;
+	}
+	
+	public static void updateTiles(TileGrid grid) {
+		for(int i = 0; i < Config.getWidth()/Config.getSize(); i++) {
+			for(int j = 0; j < Config.getHeight()/Config.getSize(); j++) {
+				int food = grid.GetTile(i, j).getTotalFood();
+				TileType typeOfTile = grid.GetTile(i, j).getType();
+				
+				//while we are looping through the list of tiles, we might as well clear them
+				//and/or spawn any offspring
+				if(grid.GetTile(i, j).getCreaturesOnTile().size() >= 2) {
+					ArrayList<Entity> creatureList = Spawn.getEntityList();
+					
+					//Only get the first 2 on the tile, ignore all the others
+					Entity e1 = grid.GetTile(i, j).getCreaturesOnTile().get(0);
+					Entity e2 = grid.GetTile(i, j).getCreaturesOnTile().get(1);
+					
+					ArrayList<Integer> crossBreedOutcome = crossBreed(e1, e2);
+					//creatureList.add(new Entity(crossBreedOutcome));
+					Spawn.setEntityList(creatureList);
+				}
+				
+				grid.GetTile(i, j).clearEntityList();
+				
+				switch(typeOfTile) {
+					case Mountains:
+						if(food < typeOfTile.getMaxfood()) {
+							grid.GetTile(i, j).setTotalFood(grid.GetTile(i, j).getTotalFood() + typeOfTile.getFoodRegen());
+						}
+						break;
+					case Water:
+						if(food < typeOfTile.getMaxfood()) {
+							grid.GetTile(i, j).setTotalFood(grid.GetTile(i, j).getTotalFood() + typeOfTile.getFoodRegen());
+						}
+						break;
+					case Highlands:
+						if(food < typeOfTile.getMaxfood()) {
+							grid.GetTile(i, j).setTotalFood(grid.GetTile(i, j).getTotalFood() + typeOfTile.getFoodRegen());
+						}
+						break;
+					case Grass:
+						if(food < typeOfTile.getMaxfood()) {
+							grid.GetTile(i, j).setTotalFood(grid.GetTile(i, j).getTotalFood() + typeOfTile.getFoodRegen());
+						}
+						if(food <= 70) {
+							grid.GetTile(i, j).setType(TileType.Dirt);
+							grid.GetTile(i, j).setTexture(QuickLoad("dirt"));
+						}
+						break;
+					case Dirt:
+						if(food < typeOfTile.getMaxfood()) {
+							grid.GetTile(i, j).setTotalFood(grid.GetTile(i, j).getTotalFood() + typeOfTile.getFoodRegen());
+						}
+						
+						if(food > 91) {
+							
+							grid.GetTile(i, j).setType(TileType.Grass);
+							grid.GetTile(i, j).setTexture(QuickLoad("grass"));
+						}
+						break;
+					case Sand:
+						break;
+					case Border:
+						break;
+				default:
+					System.out.println("Error in replenish food, unknown tiletype = "+ typeOfTile);
+					break;
+				}
+			}
+		}
+	}
+	
+	public static int eatFood(int x, int y, TileGrid grid) {
 		int food = 0;
 		try {
 			food = grid.GetTile(x, y).getTotalFood();
 		} catch(Exception ex) {
-			return 0;
+			return -10;
 		}
-		if(food >= 5) {
-			grid.GetTile(x, y).setTotalFood(food - 5);
-			return 5;
+		if(food >= 10) {
+			food = food -10;
+			grid.GetTile(x, y).setTotalFood(food);
+			return 10;
 		} else {
 			grid.GetTile(x, y).setTotalFood(0);
-			return food - 5;
+			return food -10;
 		}
 	}
 	
-	//refreshes the food on a tile up to a maximum
-	public static void replenishFood(TileGrid grid) {
-		
-		for(findBestTile tile: tilesEatenFrom) {
-			int x = tile.getxCoord();
-			int y = tile.getyCoord();
-			int food = tile.getCurrentFood();
-			TileType t = tile.getTileType();
-			
-			switch(t) {											
-				case Dirt: 
-					grid.GetTile(x, y).setTotalFood(grid.GetTile(x, y).getTotalFood() + grid.GetTile(x, y).getFoodRegen());
-					if(food >= 80) {
-						grid.GetTile(x, y).setTexture(QuickLoad("grass"));
-						grid.GetTile(x, y).setType(TileType.Grass);
-					}
-					break;	
-									
-				case Grass: 
-					if(food <= 100) {
-						grid.GetTile(x, y).setTotalFood(grid.GetTile(x, y).getTotalFood() + grid.GetTile(x, y).getFoodRegen());
-					} 
-					if(food <= 80) {
-						grid.GetTile(x, y).setTexture(QuickLoad("dirt"));
-						grid.GetTile(x, y).setType(TileType.Dirt);
-					}
-					break;
-									
-				case Highlands:
-					if(food <= 40) {
-						grid.GetTile(x, y).setTotalFood(grid.GetTile(x, y).getTotalFood() + grid.GetTile(x, y).getFoodRegen());
-					} 
-					break;
-				case Sand:
-					if(food <= 25) {
-						grid.GetTile(x, y).setTotalFood(grid.GetTile(x, y).getTotalFood() + grid.GetTile(x, y).getFoodRegen());
-					} 
-					break;
-				
-				default: 
-					System.out.println("aSDASFDAFasdf");
-					break;
-			}
-		}
-		tilesEatenFrom.clear();
+	public static void reverse(Entity e) {
+		e.setxSpeed(e.getxSpeed() * -1);
+		e.setySpeed(e.getySpeed() * -1);	
 	}
 }
- 
