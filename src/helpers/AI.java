@@ -1,8 +1,8 @@
 package helpers;
 
-import static helpers.Artist.QuickLoad;
+import static helpers.Artist.*;
 
-import java.nio.ByteBuffer;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
@@ -12,94 +12,22 @@ import data.Spawn;
 import data.TileGrid;
 import data.TileType;
 import data.findBestTile;
+import data.tilesInVision;
 
 public class AI {
 	public static void setNewDirection(Entity e, TileGrid grid, int x, int y) {
 		
-		int food = 0;
-		findBestTile[] surroundingTiles = new findBestTile[9];
+		findBestTile[] surroundingTiles = new findBestTile[15];
 		
-		//We're setting this to -100 for now as it makes the game look like it's lagging
-		try {
-			food = grid.GetTile(x, y).getTotalFood();
-		} catch(Exception ex) {
-			food = 0;
-		}
-		findBestTile z0 = new findBestTile(x, y, -100, "z0");
-		surroundingTiles[0] = z0;
-		
-		try {
-			food = grid.GetTile(x + 1, y).getTotalFood();
-		} catch(Exception ex) {
-			food = 0;
-		}
-		findBestTile z1 = new findBestTile(x + 1, y, food, "z1");
-		surroundingTiles[1] = z1;
-		
-		try {
-			food = grid.GetTile(x, y + 1).getTotalFood();
-		} catch(Exception ex) {
-			food = 0;
-		}
-		findBestTile z2 = new findBestTile(x, y + 1, food, "z2");
-		surroundingTiles[2] = z2;
-		
-		try {
-			food = grid.GetTile(x + 1, y + 1).getTotalFood();
-		} catch(Exception ex) {
-			food = 0;
-		}
-		findBestTile z3 = new findBestTile(x + 1, y + 1, food, "z3");
-		surroundingTiles[3] = z3;
-		
-		try {
-			food = grid.GetTile(x - 1, y - 1).getTotalFood();
-		} catch(Exception ex) {
-			food = 0;
-		}
-		findBestTile z4 = new findBestTile(x - 1, y - 1, food, "z4");
-		surroundingTiles[4] = z4;
-		
-		try {
-			food = grid.GetTile(x, y - 1).getTotalFood();
-		} catch(Exception ex) {
-			food = 0;
-		}
-		findBestTile z5 = new findBestTile(x, y - 1, food, "z5");
-		surroundingTiles[5] = z5;
-		
-		try {
-			food = grid.GetTile(x - 1, y).getTotalFood();
-		} catch(Exception ex) {
-			food = 0;
-		}
-		findBestTile z6 = new findBestTile(x - 1, y, food, "z6");
-		surroundingTiles[6] = z6;
-		
-		try {
-			food = grid.GetTile(x + 1, y - 1).getTotalFood();
-		} catch(Exception ex) {
-			food = 0;
-		}
-		findBestTile z7 = new findBestTile(x + 1, y - 1, food, "z7");
-		surroundingTiles[7] = z7;
-		
-		try {
-			food = grid.GetTile(x - 1, y + 1).getTotalFood();
-		} catch(Exception ex) {
-			food = 0;
-		}
-		findBestTile z8 = new findBestTile(x - 1, y + 1, food, "z8");
-		surroundingTiles[8] = z8;
-		
+		surroundingTiles = tilesInVision.getFacingTiles(e, grid, x, y);
+
 		//Sort tiles
 		Arrays.sort(surroundingTiles);
 		
-		Random i = new Random();
-		int rand = i.nextInt(5);
-		String largestValue = "z1";
+		//facing value default is north 
+		String largestValue = "north";
 		try {
-			largestValue = surroundingTiles[rand].getDirection();
+			largestValue = surroundingTiles[0].getDirection();
 		}catch(Exception ex) {
 			System.out.println("Error finding best tile.");
 		}
@@ -123,145 +51,114 @@ public class AI {
 		  	|
 		  +y|
 		*/
-		
-		double orgSpeed = e.getOrigSpeed();
+		e.setIsFacing(surroundingTiles[0].getDirection());
+		double origSpeed = e.getOrigSpeed();
 		switch(largestValue) {
-			case "z0":
+			case "north":
 				e.setxSpeed(0);
-				e.setySpeed(0);
-			break;
-			case "z1":
-				e.setxSpeed(orgSpeed);
-				e.setySpeed(0);
+				e.setySpeed(-origSpeed);
 				break;
-			case "z2":
+			case "south":
 				e.setxSpeed(0);
-				e.setySpeed(orgSpeed);
+				e.setySpeed(origSpeed);
 				break;
-			case "z3":
-				e.setxSpeed(orgSpeed);
-				e.setySpeed(orgSpeed);
+			case "east":
+				e.setxSpeed(origSpeed);
+				e.setySpeed(0);
 				break;
-			case "z4":
-				e.setxSpeed(-orgSpeed);
-				e.setySpeed(-orgSpeed);
+			case "west":
+				e.setxSpeed(-origSpeed);
+				e.setySpeed(0);
 				break;	
-			case "z5":
-				e.setxSpeed(-orgSpeed);
-				e.setySpeed(0);
+			case "northeast":
+				e.setxSpeed(origSpeed);
+				e.setySpeed(-origSpeed);
 				break;
-			case "z6":
-				e.setxSpeed(-orgSpeed);
-				e.setySpeed(0);
+			case "northwest":
+				e.setxSpeed(-origSpeed);
+				e.setySpeed(-origSpeed);
 				break;
-			case "z7":
-				e.setxSpeed(orgSpeed);
-				e.setySpeed(-orgSpeed);
+			case "southeast":
+				e.setxSpeed(origSpeed);
+				e.setySpeed(-origSpeed);
 				break;
-			case "z8":
-				e.setxSpeed(-orgSpeed);
-				e.setySpeed(orgSpeed);
+			case "southwest":
+				e.setxSpeed(-origSpeed);
+				e.setySpeed(-origSpeed);
 				break;
 		}
 	}
 	
 	public static ArrayList<Integer> crossBreed(Entity male, Entity female) {
 		ArrayList<Integer> childStats = new ArrayList<Integer>();
+		childStats.clear();
+		
 		//Mix male and female stats and return the stats of the offspring
 		
+		int childSpeed = getGaussian(male.getOrigSpeed(), female.getOrigSpeed());
+		int childAttack = getGaussian(male.getAttackVal(), female.getAttackVal());
+		int childDefense = getGaussian(male.getDefenseVal(), female.getDefenseVal());
+		int childIntelligence = getGaussian(male.getIntelligence(), female.getIntelligence());
 		
-		/* EXPERIMENTAL 
-		
-		//byte[] byteChildSpeed = XORbyteArrays(toByteArray(male.getOrigSpeed()), toByteArray(female.getOrigSpeed()));
-		
-		System.out.println(male.getIntelligence());
-		System.out.println(female.getIntelligence());
-		
-		byte[] ar1 = toByteArray(male.getIntelligence());
-		byte[] ar2 = toByteArray(female.getIntelligence());
-		
-		for(int i =0; i < ar1.length; i++) {
-			System.out.print(ar1[i]);
-		}
-		System.out.println();
-		for(int i =0; i < ar1.length; i++) {
-			System.out.print(ar2[i]);
-		}
-		
-		System.out.println();
-		//System.out.println(female.getOrigSpeed());
-		//System.out.println(toInt(byteChildSpeed));
-				 
-		//System.out.println((int)male.getOrigSpeed());
-		//System.out.println((int)female.getOrigSpeed());
-		//System.out.println(childSpeed);
-		
-		byte[] byteChildSpeed = XORbyteArrays(toByteArray(male.getIntelligence()), toByteArray(female.getIntelligence()));
-		System.out.println(byteChildSpeed);
-		System.out.println(toInt(byteChildSpeed));
-		System.out.println("_____________________");
-		
-		
-		*/
-		
-		//childStats.add();
-		
-		
+		childStats.add((int)male.getX() + 1); //the coords for both will be the same
+		childStats.add((int)male.getY() + 1);
+		childStats.add(childSpeed); 		
+		childStats.add(childAttack);		
+		childStats.add(childDefense);		
+		childStats.add(childIntelligence);	
 		return childStats;
 	}
 	
-	public static byte[] toByteArray(int value) {
-	    byte[] bytes = new byte[8];
-	    ByteBuffer.wrap(bytes).putInt(value);
-	    return bytes;
-	}
-	
-	public static byte[] toByteArray(double value) {
-	    byte[] bytes = new byte[8];
-	    ByteBuffer.wrap(bytes).putDouble(value);
-	    return bytes;
-	}
-	
-	public static double toDouble(byte[] bytes) {
-	    return ByteBuffer.wrap(bytes).getDouble();
-	}
-	
-	public static int toInt(byte[] bytes) {
-	    return ByteBuffer.wrap(bytes).getInt();
-	}
-	
-	public static byte[] XORbyteArrays(byte[] array_1, byte[] array_2) {
-		byte[] array_3 = new byte[8];
-
-		int i = 0;
-		for (byte b : array_1)
-		    array_3[i] = (byte) (b ^ array_2[i++]);
+	public static int getGaussian(int male, int female) {
+		int high = 0;
+		int low = 0;
+		Random x = new Random();
 		
-		return array_3;
+		if(male > female) {
+			high = male;
+			low = female;
+		} else {
+			high = female;
+			low = male;
+		}
+		return (int)x.nextGaussian() * (high - (low*2)) + (high - ((high - low)/2));
 	}
 	
 	public static void updateTiles(TileGrid grid) {
 		for(int i = 0; i < Config.getWidth()/Config.getSize(); i++) {
 			for(int j = 0; j < Config.getHeight()/Config.getSize(); j++) {
-				int food = grid.GetTile(i, j).getTotalFood();
-				TileType typeOfTile = grid.GetTile(i, j).getType();
 				
 				//while we are looping through the list of tiles, we might as well clear them
-				//and/or spawn any offspring
-				if(grid.GetTile(i, j).getCreaturesOnTile().size() >= 2) {
+				//and/or spawn any offspring or do any fighting
+				
+				int numOfCreaturesOnTile = grid.GetTile(i, j).getCreaturesOnTile().size();
+				ArrayList<Entity> creaturesOnTile = grid.GetTile(i, j).getCreaturesOnTile();
+				if(numOfCreaturesOnTile >= 2) {
+					for(int k = 0; i < creaturesOnTile.size(); k++) {
+						
+					}
 					ArrayList<Entity> creatureList = Spawn.getEntityList();
+					
+					//TODO
+					
+					
 					
 					//Only get the first 2 on the tile, ignore all the others
 					Entity e1 = grid.GetTile(i, j).getCreaturesOnTile().get(0);
 					Entity e2 = grid.GetTile(i, j).getCreaturesOnTile().get(1);
 					
-					ArrayList<Integer> crossBreedOutcome = crossBreed(e1, e2);
-					//creatureList.add(new Entity(crossBreedOutcome));
-					Spawn.setEntityList(creatureList);
+					if(e1.getTicksSinceLastChild() > 200 && e1.getTicksSinceLastChild() > 200) {
+						ArrayList<Integer> crossBreedOutcome = crossBreed(e1, e2);
+						creatureList.add(new Entity(crossBreedOutcome));
+						Spawn.setEntityList(creatureList);
+						e1.setTicksSinceLastChild(0);
+						e2.setTicksSinceLastChild(0);
+					}
 				}
 				
+				int food = grid.GetTile(i, j).getTotalFood();
+				TileType typeOfTile = grid.GetTile(i, j).getType();
 				grid.GetTile(i, j).clearEntityList();
-				
 				switch(typeOfTile) {
 					case Mountains:
 						if(food < typeOfTile.getMaxfood()) {
@@ -318,7 +215,7 @@ public class AI {
 			return -10;
 		}
 		if(food >= 10) {
-			food = food -10;
+			food = food - 10;
 			grid.GetTile(x, y).setTotalFood(food);
 			return 10;
 		} else {
@@ -330,5 +227,40 @@ public class AI {
 	public static void reverse(Entity e) {
 		e.setxSpeed(e.getxSpeed() * -1);
 		e.setySpeed(e.getySpeed() * -1);	
+		
+		//reverse the facing direction 
+		switch(e.getIsFacing()) {
+			case "north":
+				e.setIsFacing("south");
+				break;
+				
+			case "south":
+				e.setIsFacing("north");
+				break;
+				
+			case "east":
+				e.setIsFacing("west");
+				break;
+				
+			case "west":
+				e.setIsFacing("east");
+				break;
+				
+			case "northwest":
+				e.setIsFacing("southeast");
+				break;
+				
+			case "northeast":
+				e.setIsFacing("southwest");
+				break;
+				
+			case "southwest":
+				e.setIsFacing("northwest");
+				break;
+				
+			case "southeast":
+				e.setIsFacing("northwest");
+				break;
+		}
 	}
 }

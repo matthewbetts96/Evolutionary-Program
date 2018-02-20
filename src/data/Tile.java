@@ -13,6 +13,7 @@ public class Tile {
 	private int x,y , width, height, totalFood, foodRegen;
 	private Texture texture;
 	private TileType type;
+	private boolean isTraversable;
 	private ArrayList<Entity> creaturesOnTile;
 	
 	public Tile(int x, int y, TileType type) {
@@ -24,6 +25,7 @@ public class Tile {
 		this.texture = QuickLoad(type.textureName);
 		this.totalFood = type.maxFood;
 		this.foodRegen = type.foodRegen;
+		this.setTraversable(type.traversable);
 		this.creaturesOnTile = new ArrayList<Entity>(); 
 	}
 	
@@ -110,4 +112,13 @@ public class Tile {
 	public void setCreaturesOnTile(ArrayList<Entity> creaturesOnTile) {
 		this.creaturesOnTile = creaturesOnTile;
 	}
+
+	public boolean isTraversable() {
+		return isTraversable;
+	}
+
+	public void setTraversable(boolean isTraversable) {
+		this.isTraversable = isTraversable;
+	}
+
 }

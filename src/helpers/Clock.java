@@ -28,6 +28,13 @@ public class Clock {
 		}
 	}
 	
+	public static void update() {
+		//fixed delta time to a set value for now
+		d = (float) 0.4;//getDelta();
+		totalTime += d;
+		ticksSinceGameStart +=1;
+	}
+	
 	public static float TotalTime() {
 		return totalTime;
 	}
@@ -36,11 +43,6 @@ public class Clock {
 		return multiplier;
 	}
 	
-	public static void update() {
-		d = getDelta();
-		totalTime += d;
-		ticksSinceGameStart +=1;
-	}
 	
 	public static long ticksSinceGameStart() {
 		return ticksSinceGameStart;

@@ -21,8 +21,9 @@ public class TileGrid {
 	    } catch (IOException ex){
 	        System.out.println("Error. Failed to load noise.png.");
 	    } 
-	    int noiseWidth = (int)Config.getWidth()/Config.getSize();
-	    int noiseHeight = (int)Config.getHeight()/Config.getSize();
+	    int noiseWidth = Config.getNoiseWidth();
+	    int noiseHeight = Config.getNoiseHeight();
+	    int size = Config.getSize();
 		map = new Tile[noiseWidth][noiseHeight]; 
 		
 		for(int i = 0; i < map.length; i++) {
@@ -31,23 +32,23 @@ public class TileGrid {
 				int colour = (clr & 0x00ff0000) >> 16;
 			
 				if(i == 0 || i == 1 || j == 0 || j == 1) {
-					map[i][j] = new Tile(i * Config.getSize(), j * Config.getSize(), TileType.Border);
-				} else if(i >= noiseWidth - 2 || j >= noiseWidth - 2) {
-					map[i][j] = new Tile(i * Config.getSize(), j * Config.getSize(), TileType.Border);
+					map[i][j] = new Tile(i * size, j * size, TileType.Mountains);
+				} else if(i >= noiseWidth - (size*2) || j >= noiseWidth - 2) {
+					map[i][j] = new Tile(i * size, j * size, TileType.Mountains);
 					/* 
 					 * Fist two if/else if define the border
 					 * The rest define the map 
 					 */
 				} else if(colour > 170){
-					map[i][j] = new Tile(i * Config.getSize(), j * Config.getSize(), TileType.Water);
+					map[i][j] = new Tile(i * size, j * size, TileType.Water);
 	            } else if(colour > 160){
-	            	map[i][j] = new Tile(i * Config.getSize(), j * Config.getSize(), TileType.Sand);	
+	            	map[i][j] = new Tile(i * size, j * size, TileType.Sand);	
 	            } else if(colour > 95){
-	            	map[i][j] = new Tile(i * Config.getSize(), j * Config.getSize(), TileType.Grass);	
+	            	map[i][j] = new Tile(i * size, j * size, TileType.Grass);	
 				} else if(colour > 85){
-					map[i][j] = new Tile(i * Config.getSize(), j * Config.getSize(), TileType.Highlands);	
+					map[i][j] = new Tile(i * size, j * size, TileType.Highlands);	
 	            } else {
-	            	map[i][j] = new Tile(i * Config.getSize(), j * Config.getSize(), TileType.Mountains);	
+	            	map[i][j] = new Tile(i * size, j * size, TileType.Mountains);	
 	            }		
 			}
 		}

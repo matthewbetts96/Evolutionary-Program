@@ -1,41 +1,21 @@
 package data;
 
 public class findBestTile implements Comparable<findBestTile>{
-	private int xCoord;
-	private int yCoord;
-	private int currentFood;
+	private int tileScore;
 	private String direction;
 	
-	public findBestTile(int xCoord, int yCoord, int currentFood, String direction){
+	public findBestTile(int tileScore, String direction){
 		super();
-		this.xCoord = xCoord;
-		this.yCoord = yCoord;
-		this.currentFood = currentFood;
+		this.tileScore = tileScore;
 		this.direction = direction;
 	}
 	
-	public int getxCoord() {
-		return xCoord;
+	public int getTileScore() {
+		return tileScore;
 	}
-
-	public void setxCoord(int xCoord) {
-		this.xCoord = xCoord;
-	}
-
-	public int getyCoord() {
-		return yCoord;
-	}
-
-	public void setyCoord(int yCoord) {
-		this.yCoord = yCoord;
-	}
-
-	public int getCurrentFood() {
-		return currentFood;
-	}
-
-	public void setCurrentFood(int currentFood) {
-		this.currentFood = currentFood;
+	
+	public void setTileScore(int tileScore) {
+		this.tileScore = tileScore;
 	}
 	
 	public String getDirection() {
@@ -45,13 +25,11 @@ public class findBestTile implements Comparable<findBestTile>{
 	public void setDirection(String direction) {
 		this.direction = direction;
 	}
-
-	/*I really need someone to explain to 
-	 * me how/why this works
-	 */
+	
+	//Override the compareTo method so we can sort the tiles
 	@Override
 	public int compareTo(findBestTile compareTiles) {
-		int compareQuantity = ((findBestTile)compareTiles).getCurrentFood();
-		return compareQuantity - this.currentFood;
+		int compareQuantity = ((findBestTile)compareTiles).getTileScore();
+		return compareQuantity - this.tileScore;
 	}
 }

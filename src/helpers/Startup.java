@@ -41,7 +41,7 @@ public class Startup {
 	public static void createSession() {
 		Display.setTitle("Evolutionary Simulation 2");
 		try {
-			Display.setDisplayMode(new DisplayMode(Config.getWidth(), Config.getHeight()));
+			Display.setDisplayMode(new DisplayMode(width, height));
 			Display.create();
 		} catch (LWJGLException e) {
 			e.printStackTrace();
@@ -49,7 +49,7 @@ public class Startup {
 		
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		glOrtho(0, Config.getWidth(), Config.getHeight(), 0 , 1, -1);
+		glOrtho(0, width, height, 0 , 1, -1);
 		glMatrixMode(GL_MODELVIEW);
 		glEnable(GL_TEXTURE_2D);
 		glEnable(GL_BLEND);
@@ -60,8 +60,8 @@ public class Startup {
 	}
 	
 	public static void generateNoise(int rand) {
-		int noiseHeight = height/tileSize;
-		int noiseWidth = width/tileSize;
+		int noiseHeight = Config.getNoiseHeight();
+		int noiseWidth = Config.getNoiseWidth();
 		try{
 			File file = new File("noise.png");
 			if(file.delete()){

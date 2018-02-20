@@ -2,11 +2,11 @@ package data;
 
 public enum TileType {
 	
-	Grass("grass", true, 100, 4), 
-	Dirt("dirt", true, 100, 3), 
-	Water("water", false, 30, 2), 
+	Grass("grass", true, 100, 3), 
+	Dirt("dirt", true, 100, 2), 
+	Water("water", false, 30, 1), 
 	Sand("sand", true, 30, 1), 
-	Highlands("highland", true, 40, 2), 
+	Highlands("highland", true, 40, 1), 
 	Mountains("mountain", false, 20, 1),
 	Border("border", false, 0, 0);
 	

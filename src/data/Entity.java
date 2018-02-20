@@ -12,13 +12,15 @@ import org.newdawn.slick.opengl.Texture;
 import helpers.Config;
 
 public class Entity {
-	private int width, height, health, healthRegen, attackVal, defenseVal, intelligence, maxHunger, currentHunger, hungerDepeletionRate;
+	private int width, height, health, healthRegen, attackVal, defenseVal, intelligence, 
+	maxHunger, currentHunger, hungerDepeletionRate, origSpeed, age, ticksSinceLastChild;
 	private float x, y;
-	private double origSpeed,ySpeed, xSpeed;
+	private double ySpeed, xSpeed;
+	String isFacing;
 	private Texture texture;
 	private EntityType species;
-	private boolean first; 
-	
+	private boolean first, isMale; 
+
 	public Entity(EntityType species, Random i, Random j) {
 		this.x = i.nextInt(Config.getWidth());
 		this.y = j.nextInt(Config.getHeight());
@@ -37,7 +39,10 @@ public class Entity {
 		}
 		this.currentHunger = 100;
 		this.hungerDepeletionRate = 1;
+		this.age = 0;
 		this.first = true;
+		this.ticksSinceLastChild = 0;
+		this.isFacing = "north";
 		
 		//Species enum declarations
 		this.species = species;
@@ -47,7 +52,32 @@ public class Entity {
 	
 	public Entity(ArrayList<Integer> childStats) {
 		//defines stats of new child
+		this.x = childStats.get(0);
+		this.y = childStats.get(1);
+		this.xSpeed = 0;
+		this.ySpeed = 0; 
+		this.origSpeed = childStats.get(2);
+		this.width = Config.getSize(); 
+		this.height = Config.getSize();
+		this.health = 100;
+		this.healthRegen = 1;
+		this.attackVal = childStats.get(3);
+		this.defenseVal = childStats.get(4);
+		this.intelligence = childStats.get(5);
+		if(this.intelligence == 0) {
+			this.intelligence = 1;
+		}
+		this.currentHunger = 100;
+		this.hungerDepeletionRate = 1;
+		this.age = 0;
+		this.first = true;
+		this.ticksSinceLastChild = 0;
+		this.isFacing = "north";
 		
+		//Species enum declarations
+		this.species = EntityType.Prey;
+		this.maxHunger = EntityType.Prey.getMaxHunger();
+		this.texture = QuickLoad(EntityType.Prey.getTextureName());
 	}
 	
 	//Method to draw the entity at coordinate x,y with it's set texture
@@ -63,6 +93,11 @@ public class Entity {
 			x += Delta() * xSpeed;
 			y += Delta() * ySpeed;
 		}
+	}
+	
+	public void birthday() {
+		this.age += 1;
+		this.ticksSinceLastChild += 1;
 	}
 
 
@@ -162,11 +197,11 @@ public class Entity {
 		this.y = y;
 	}
 
-	public double getOrigSpeed() {
+	public int getOrigSpeed() {
 		return origSpeed;
 	}
 
-	public void setOrigSpeed(double origSpeed) {
+	public void setOrigSpeed(int origSpeed) {
 		this.origSpeed = origSpeed;
 	}
 
@@ -210,5 +245,28 @@ public class Entity {
 		this.first = first;
 	}
 	
+	public int getAge() {
+		return age;
+	}
+
+	public void setFirst(int age) {
+		this.age = age;
+	}
+	
+	public int getTicksSinceLastChild() {
+		return ticksSinceLastChild;
+	}
+
+	public void setTicksSinceLastChild(int ticksSinceLastChild) {
+		this.ticksSinceLastChild = ticksSinceLastChild;
+	}
+	
+	public String getIsFacing() {
+		return isFacing;
+	}
+
+	public void setIsFacing(String isFacing) {
+		this.isFacing = isFacing;
+	}
 	
 }

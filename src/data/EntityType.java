@@ -1,13 +1,14 @@
 package data;
 
 public enum EntityType {
-	Predator("Predator", true, 250),
+	Predator("predator", true, 250),
 	Prey("prey", false, 100);
 	
 	String textureName;
 	boolean isPredator;
 	int maxHunger;
-	
+	String isFacing;
+
 	EntityType(String textureName, boolean isPredator, int maxHunger){
 		this.textureName = textureName;
 		this.isPredator = isPredator;
