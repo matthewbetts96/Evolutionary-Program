@@ -1,12 +1,10 @@
 package helpers;
-import helpers.Config;
-
 import org.lwjgl.Sys;
 
 public class Clock {
 	private static boolean paused = false;
 	private static long lastFrame, totalTime;
-	private static float d = 0, multiplier = Config.getStartMultiplier();
+	private static float d = 0, multiplier = 1;
 	private static long ticksSinceGameStart = 0;
 	
 	public static long getTime() {
@@ -67,5 +65,4 @@ public class Clock {
 	public static boolean isPaused() {
 		return paused;
 	}
-	
 }

@@ -1,16 +1,14 @@
 package data;
 
-import org.newdawn.slick.opengl.Texture;
-
 import static helpers.Artist.DrawQuadTex;
 import static helpers.Artist.QuickLoad;
 
 import java.util.ArrayList;
 
-import helpers.Config;
+import org.newdawn.slick.opengl.Texture;
 
 public class Tile {
-	private int x,y , width, height, totalFood, foodRegen;
+	private int x,y , width, height, totalFood, foodRegen, currentFood;
 	private Texture texture;
 	private TileType type;
 	private boolean isTraversable;
@@ -19,11 +17,12 @@ public class Tile {
 	public Tile(int x, int y, TileType type) {
 		this.x = x;
 		this.y = y;
-		this.width = Config.getSize();
-		this.height = Config.getSize();
+		this.width = 1000;
+		this.height = 1000;
 		this.type = type;
 		this.texture = QuickLoad(type.textureName);
 		this.totalFood = type.maxFood;
+		this.currentFood = type.maxFood;
 		this.foodRegen = type.foodRegen;
 		this.setTraversable(type.traversable);
 		this.creaturesOnTile = new ArrayList<Entity>(); 
@@ -32,14 +31,6 @@ public class Tile {
 	public void Draw() {
 		DrawQuadTex(texture, x, y, width, height);
 	}
-		
-	public void addEntity(Entity e) {
-		creaturesOnTile.add(e);
-	}
-	
-	public void clearEntityList() {
-		creaturesOnTile.clear();
-	} 
 	
 	public int getX() {
 		return x;
@@ -105,6 +96,22 @@ public class Tile {
 		this.type = type;
 	}
 
+	public boolean isTraversable() {
+		return isTraversable;
+	}
+
+	public void setTraversable(boolean isTraversable) {
+		this.isTraversable = isTraversable;
+	}
+	
+	public int getCurrentFood() {
+		return currentFood;
+	}
+
+	public void setCurrentFood(int currentFood) {
+		this.currentFood = currentFood;
+	}
+
 	public ArrayList<Entity> getCreaturesOnTile() {
 		return creaturesOnTile;
 	}
@@ -113,12 +120,11 @@ public class Tile {
 		this.creaturesOnTile = creaturesOnTile;
 	}
 
-	public boolean isTraversable() {
-		return isTraversable;
-	}
-
-	public void setTraversable(boolean isTraversable) {
-		this.isTraversable = isTraversable;
-	}
-
+	public void clearEntityList() {
+		creaturesOnTile.clear();
+	} 
+	
+	public void addEntity(Entity e) {
+		creaturesOnTile.add(e);
+	}	
 }

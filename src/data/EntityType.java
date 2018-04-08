@@ -1,7 +1,7 @@
 package data;
 
 public enum EntityType {
-	Predator("predator", true, 250),
+	Predator("predator", true, 200),
 	Prey("prey", false, 100);
 	
 	String textureName;

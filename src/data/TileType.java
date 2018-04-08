@@ -2,13 +2,12 @@ package data;
 
 public enum TileType {
 	
-	Grass("grass", true, 100, 3), 
-	Dirt("dirt", true, 100, 2), 
-	Water("water", false, 30, 1), 
-	Sand("sand", true, 30, 1), 
-	Highlands("highland", true, 40, 1), 
-	Mountains("mountain", false, 20, 1),
-	Border("border", false, 0, 0);
+	Grass("grass", true, 100, 5), 
+	Dirt("dirt", true, 100, 4), 
+	Water("water", false, 0, 0), 
+	Sand("sand", true, 60, 2), 
+	Highlands("highland", true, 40, 3), 
+	Mountains("mountain", false, 0, 0);
 	
 	String textureName;
 	boolean traversable;

@@ -1,7 +1,5 @@
 package data;
 
-import java.util.ArrayList;
-
 public class tilesInVision {
 	
 	private static String facingDirection;
@@ -9,7 +7,7 @@ public class tilesInVision {
 	private static findBestTile[] surroundingTiles = new findBestTile[15];
 	
 	public static findBestTile[] getFacingTiles(Entity e, TileGrid grid, int x, int y){
-		facingDirection = e.getIsFacing();
+		facingDirection = e.getFacingDirection();
 		
 		switch(facingDirection)
 		{
@@ -50,37 +48,43 @@ public class tilesInVision {
 	
 	//Evaulates the 'score' of a tile based off of it's attractiveness to the 
 	//current creature. Takes into account food, friends and possible enemies 
-	//All possible 
-	public static int evaluateCreaturesOnTile(int x, int y, TileGrid grid, Entity e) {
-		int tileScore = 0;
-		String entitySpecies = e.getSpecies().getTextureName();
-		int numOfCreaturesOnTile = grid.GetTile(x, y).getCreaturesOnTile().size();
-		ArrayList<Entity> creaturesOnTile = grid.GetTile(x, y).getCreaturesOnTile();
+	private static int evaluateCreaturesOnTile(int x, int y, TileGrid grid, Entity e) {
+		int tileScore = 5;
+		/*
+		 ArrayList<Entity> creaturesOnTile = grid.GetTile(x, y).getCreaturesOnTile();
+		 
 
-		//For each creature on the tile
-		for(int i = 0; i < creaturesOnTile.size(); i++) {
-			//Account for possible friends/foes
-			if(creaturesOnTile.get(i).getSpecies().getTextureName() == entitySpecies) {
-				tileScore = tileScore + 100;
-			} else {
-				tileScore = tileScore - 100;
+		//If the main creature is a predator
+		if(e.getSpecies().isPredator()) {
+			for(int i = 0; i < creaturesOnTile.size(); i++) {
+				//we want the predators to 'hunt' the prey 
+				if(creaturesOnTile.get(i).getSpecies().isPredator()) {
+					tileScore += 50;
+				} else {
+					tileScore += 200;
+				}
 			}
-		}
-		
-		//Account for the "crowdedness" of a tile
-		if(numOfCreaturesOnTile >= 3) {
-			tileScore = tileScore - 100;
-		}
+		} else {
+			for(int i = 0; i < creaturesOnTile.size(); i++) {
+				//we want the predators to 'hunt' the prey 
+				if(creaturesOnTile.get(i).getSpecies().isPredator()) {
+					tileScore += -200;
+				} else {
+					tileScore += 100;
+				}
+			}
+		}	
 			
 		//Ajust score based off of food level
 		tileScore = tileScore + grid.GetTile(x, y).getTotalFood();
+		*/
 		return tileScore;
 	
 	}
 	
 	//Source image for tile vision cones 
 	//https://puu.sh/zaQQp/0ee71beebd.png
-	public static findBestTile[] north(Entity e, TileGrid grid, int x, int y) {
+	private static findBestTile[] north(Entity e, TileGrid grid, int x, int y) {
 		
 		tilescore = grid.GetTile(x-1, y-1).getTotalFood() + evaluateCreaturesOnTile(x-1, y-1, grid, e); 
 		surroundingTiles[0] = new findBestTile(tilescore, "northwest");
@@ -116,7 +120,7 @@ public class tilesInVision {
 		surroundingTiles[14] = new findBestTile(tilescore, "northeast");
 		return surroundingTiles;
 	} 
-	public static findBestTile[] south(Entity e, TileGrid grid, int x, int y) {
+	private static findBestTile[] south(Entity e, TileGrid grid, int x, int y) {
 		tilescore = grid.GetTile(x-1, y+1).getTotalFood() + evaluateCreaturesOnTile(x-1, y+1, grid, e); 
 		surroundingTiles[0] = new findBestTile(tilescore, "southwest");
 		tilescore = grid.GetTile(x, y+1).getTotalFood() + evaluateCreaturesOnTile(x, y+1, grid, e); 
@@ -151,7 +155,7 @@ public class tilesInVision {
 		surroundingTiles[14] = new findBestTile(tilescore, "northeast");
 		return surroundingTiles;
 	} 
-	public static findBestTile[] east(Entity e, TileGrid grid, int x, int y) {
+	private static findBestTile[] east(Entity e, TileGrid grid, int x, int y) {
 		tilescore = grid.GetTile(x+1, y).getTotalFood() + evaluateCreaturesOnTile(x+1, y, grid, e); 
 		surroundingTiles[0] = new findBestTile(tilescore, "east");
 		tilescore = grid.GetTile(x+1, y-1).getTotalFood() + evaluateCreaturesOnTile(x+1, y-1, grid, e); 
@@ -186,7 +190,7 @@ public class tilesInVision {
 		surroundingTiles[14] = new findBestTile(tilescore, "northeast");
 		return surroundingTiles;
 	} 
-	public static findBestTile[] west(Entity e, TileGrid grid, int x, int y) {
+	private static findBestTile[] west(Entity e, TileGrid grid, int x, int y) {
 		tilescore = grid.GetTile(x-1, y).getTotalFood() + evaluateCreaturesOnTile(x-1, y, grid, e); 
 		surroundingTiles[0] = new findBestTile(tilescore, "west");
 		tilescore = grid.GetTile(x-1, y-1).getTotalFood() + evaluateCreaturesOnTile(x-1, y-1, grid, e); 
@@ -221,7 +225,7 @@ public class tilesInVision {
 		surroundingTiles[14] = new findBestTile(tilescore, "southwest");
 		return surroundingTiles;
 	} 
-	public static findBestTile[] northwest(Entity e, TileGrid grid, int x, int y) {
+	private static findBestTile[] northwest(Entity e, TileGrid grid, int x, int y) {
 		tilescore = grid.GetTile(x, y-1).getTotalFood() + evaluateCreaturesOnTile(x, y-1, grid, e); 
 		surroundingTiles[0] = new findBestTile(tilescore, "north");
 		tilescore = grid.GetTile(x, y-2).getTotalFood() + evaluateCreaturesOnTile(x, y-2, grid, e); 
@@ -257,7 +261,7 @@ public class tilesInVision {
 		surroundingTiles[14] = new findBestTile(tilescore, "northwest");
 		return surroundingTiles;
 	} 
-	public static findBestTile[] northeast(Entity e, TileGrid grid, int x, int y) {
+	private static findBestTile[] northeast(Entity e, TileGrid grid, int x, int y) {
 		tilescore = grid.GetTile(x, y-1).getTotalFood() + evaluateCreaturesOnTile(x, y-1, grid, e); 
 		surroundingTiles[0] = new findBestTile(tilescore, "north");
 		tilescore = grid.GetTile(x, y-2).getTotalFood() + evaluateCreaturesOnTile(x, y-2, grid, e); 
@@ -293,7 +297,7 @@ public class tilesInVision {
 		surroundingTiles[14] = new findBestTile(tilescore, "northeast");
 		return surroundingTiles;
 	} 
-	public static findBestTile[] southwest(Entity e, TileGrid grid, int x, int y) {
+	private static findBestTile[] southwest(Entity e, TileGrid grid, int x, int y) {
 		tilescore = grid.GetTile(x, y+1).getTotalFood() + evaluateCreaturesOnTile(x, y+1, grid, e); 
 		surroundingTiles[0] = new findBestTile(tilescore, "south");
 		tilescore = grid.GetTile(x, y+2).getTotalFood() + evaluateCreaturesOnTile(x, y+2, grid, e); 
@@ -329,7 +333,7 @@ public class tilesInVision {
 		surroundingTiles[14] = new findBestTile(tilescore, "southwest");
 		return surroundingTiles;
 	} 
-	public static findBestTile[] southeast(Entity e, TileGrid grid, int x, int y) {
+	private static findBestTile[] southeast(Entity e, TileGrid grid, int x, int y) {
 		tilescore = grid.GetTile(x, y+1).getTotalFood() + evaluateCreaturesOnTile(x, y+1, grid, e); 
 		surroundingTiles[0] = new findBestTile(tilescore, "south");
 		tilescore = grid.GetTile(x, y+2).getTotalFood() + evaluateCreaturesOnTile(x, y+2, grid, e); 

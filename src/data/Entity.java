@@ -1,7 +1,6 @@
 package data;
 
 import static helpers.Artist.DrawQuadTex;
-import static helpers.Artist.QuickLoad;
 import static helpers.Clock.Delta;
 
 import java.util.ArrayList;
@@ -9,97 +8,126 @@ import java.util.Random;
 
 import org.newdawn.slick.opengl.Texture;
 
+import helpers.Artist;
 import helpers.Config;
 
 public class Entity {
-	private int width, height, health, healthRegen, attackVal, defenseVal, intelligence, 
-	maxHunger, currentHunger, hungerDepeletionRate, origSpeed, age, ticksSinceLastChild;
-	private float x, y;
-	private double ySpeed, xSpeed;
-	String isFacing;
+	private int width, height, attackVal, defenseVal, intelligence, 
+	maxHunger, currentHunger, hungerDepeletionRate, baseSpeed, age, 
+	ticksSinceLastChild;
+	
+	private float xPosition, yPosition;
 	private Texture texture;
+	private double ySpeed, xSpeed;
+	private String facingDirection;
 	private EntityType species;
-	private boolean first, isMale; 
-
-	public Entity(EntityType species, Random i, Random j) {
-		this.x = i.nextInt(Config.getWidth());
-		this.y = j.nextInt(Config.getHeight());
-		this.xSpeed = 0;
-		this.ySpeed = 0; 
-		this.origSpeed = (int) i.nextGaussian() * 2 + 2; 
+	private boolean first, isDead, isMale;
+	
+	//Constructor for making a new enitity at a random location
+	public Entity(EntityType species) {
+		Random rnd = new Random();
+		//Position on the map
+		this.xPosition = rnd.nextInt(Config.getWidth());
+		this.yPosition = rnd.nextInt(Config.getHeight());
+		
+		//Speed of the creature
+		this.xSpeed = 1;
+		this.ySpeed = 1; 
+		this.baseSpeed = rnd.nextInt(4);
+		
+		//Size of the creature 
 		this.width = Config.getSize(); 
 		this.height = Config.getSize();
-		this.health = 100;
-		this.healthRegen = 1;
-		this.attackVal = (int) i.nextGaussian() + 5;
-		this.defenseVal = (int) j.nextGaussian() + 5;
-		this.intelligence = (int) Math.round(i.nextGaussian() * 15 + 50);
-		if(this.intelligence == 0) {
-			this.intelligence = 1;
-		}
-		this.currentHunger = 100;
-		this.hungerDepeletionRate = 1;
-		this.age = 0;
-		this.first = true;
-		this.ticksSinceLastChild = 0;
-		this.isFacing = "north";
 		
-		//Species enum declarations
+		//Species type as defined by arg 0
 		this.species = species;
 		this.maxHunger = species.getMaxHunger();
-		this.texture = QuickLoad(species.getTextureName());
+		this.texture = Artist.getPrey();
+		
+		//Misc stats/values
+		this.attackVal = rnd.nextInt(50);
+		this.defenseVal = rnd.nextInt(50);
+		this.intelligence = rnd.nextInt(20) + 5;
+		this.currentHunger = species.getMaxHunger();
+		this.hungerDepeletionRate = 1;
+		this.age = 5400;
+		this.ticksSinceLastChild = 0;
+		this.isDead = false;
+		this.first = true;
+		this.facingDirection = "southeast";//set to southeast as that is what x=1,y=1 movement gives us 
+		
+		//50/50 split for male/female
+		int sex = rnd.nextInt(2);
+		if(sex == 1) {
+			this.isMale = true;
+		} else if(sex == 0){
+			this.isMale = false;
+		} 
 	}
 	
 	public Entity(ArrayList<Integer> childStats) {
-		//defines stats of new child
-		this.x = childStats.get(0);
-		this.y = childStats.get(1);
-		this.xSpeed = 0;
-		this.ySpeed = 0; 
-		this.origSpeed = childStats.get(2);
+		Random rnd = new Random();
+		//Position on the map
+		this.xPosition = childStats.get(0);
+		this.yPosition = childStats.get(1);
+		
+		//Speed of the creature
+		this.xSpeed = 1;
+		this.ySpeed = 1; 
+		this.baseSpeed = rnd.nextInt(4);
+		
+		//Size of the creature 
 		this.width = Config.getSize(); 
 		this.height = Config.getSize();
-		this.health = 100;
-		this.healthRegen = 1;
+		
+		//Species type as defined by arg 0
+		this.species = EntityType.Prey;
+		this.maxHunger = species.getMaxHunger();
+		this.texture = Artist.getPrey();
+		
+		//Misc stats/values
 		this.attackVal = childStats.get(3);
 		this.defenseVal = childStats.get(4);
 		this.intelligence = childStats.get(5);
-		if(this.intelligence == 0) {
-			this.intelligence = 1;
+		if(this.intelligence <= 0) {
+			if(this.intelligence == 0) {
+				this.intelligence = 1;
+			} else {
+				this.intelligence = this.intelligence*-1;
+			}
 		}
-		this.currentHunger = 100;
+		
+		this.currentHunger = 50;
 		this.hungerDepeletionRate = 1;
 		this.age = 0;
-		this.first = true;
 		this.ticksSinceLastChild = 0;
-		this.isFacing = "north";
+		this.isDead = false;
+		this.first = true;
+		this.facingDirection = "southeast";//set to southeast as that is what x=1,y=1 movement gives us 
 		
-		//Species enum declarations
-		this.species = EntityType.Prey;
-		this.maxHunger = EntityType.Prey.getMaxHunger();
-		this.texture = QuickLoad(EntityType.Prey.getTextureName());
+		//50/50 split for male/female
+		int sex = rnd.nextInt(2);
+		if(sex == 1) {
+			this.isMale = true;
+		} else if(sex == 0){
+			this.isMale = false;
+		} 
 	}
 	
 	//Method to draw the entity at coordinate x,y with it's set texture
 	public void Draw() {
-		DrawQuadTex(texture, x, y, width, height);
+		DrawQuadTex(texture, xPosition, yPosition, width, height);
 	}
-		
+			
 	//Updates the Entities position relative to the last time the screen was updated
 	public void Update() {
 		if(first) {
 			first = false;
 		} else {
-			x += Delta() * xSpeed;
-			y += Delta() * ySpeed;
+			xPosition += Delta() * xSpeed;
+			yPosition += Delta() * ySpeed;
 		}
 	}
-	
-	public void birthday() {
-		this.age += 1;
-		this.ticksSinceLastChild += 1;
-	}
-
 
 	public int getWidth() {
 		return width;
@@ -115,22 +143,6 @@ public class Entity {
 
 	public void setHeight(int height) {
 		this.height = height;
-	}
-
-	public int getHealth() {
-		return health;
-	}
-
-	public void setHealth(int health) {
-		this.health = health;
-	}
-
-	public int getHealthRegen() {
-		return healthRegen;
-	}
-
-	public void setHealthRegen(int healthRegen) {
-		this.healthRegen = healthRegen;
 	}
 
 	public int getAttackVal() {
@@ -181,28 +193,84 @@ public class Entity {
 		this.hungerDepeletionRate = hungerDepeletionRate;
 	}
 
-	public float getX() {
-		return x;
+	public int getBaseSpeed() {
+		return baseSpeed;
 	}
 
-	public void setX(float x) {
-		this.x = x;
+	public void setBaseSpeed(int baseSpeed) {
+		this.baseSpeed = baseSpeed;
 	}
 
-	public float getY() {
-		return y;
+	public int getAge() {
+		return age;
 	}
 
-	public void setY(float y) {
-		this.y = y;
+	public void setAge(int age) {
+		this.age = age;
 	}
 
-	public int getOrigSpeed() {
-		return origSpeed;
+	public int getTicksSinceLastChild() {
+		return ticksSinceLastChild;
 	}
 
-	public void setOrigSpeed(int origSpeed) {
-		this.origSpeed = origSpeed;
+	public void setTicksSinceLastChild(int ticksSinceLastChild) {
+		this.ticksSinceLastChild = ticksSinceLastChild;
+	}
+
+	public float getxPosition() {
+		return xPosition;
+	}
+
+	public void setxPosition(float xPosition) {
+		this.xPosition = xPosition;
+	}
+
+	public float getyPosition() {
+		return yPosition;
+	}
+
+	public void setyPosition(float yPosition) {
+		this.yPosition = yPosition;
+	}
+
+	public Texture getTexture() {
+		return texture;
+	}
+
+	public void setTexture(Texture texture) {
+		this.texture = texture;
+	}
+
+	public String getFacingDirection() {
+		return facingDirection;
+	}
+
+	public void setFacingDirection(String facingDirection) {
+		this.facingDirection = facingDirection;
+	}
+
+	public EntityType getSpecies() {
+		return species;
+	}
+
+	public void setSpecies(EntityType species) {
+		this.species = species;
+	}
+
+	public boolean isFirst() {
+		return first;
+	}
+
+	public void setFirst(boolean first) {
+		this.first = first;
+	}
+
+	public boolean isDead() {
+		return isDead;
+	}
+
+	public void setDead(boolean isDead) {
+		this.isDead = isDead;
 	}
 
 	public double getySpeed() {
@@ -221,52 +289,7 @@ public class Entity {
 		this.xSpeed = xSpeed;
 	}
 
-	public Texture getTexture() {
-		return texture;
+	public boolean isMale() {
+		return isMale;
 	}
-
-	public void setTexture(Texture texture) {
-		this.texture = texture;
-	}
-
-	public EntityType getSpecies() {
-		return species;
-	}
-
-	public void setSpecies(EntityType species) {
-		this.species = species;
-	}
-
-	public boolean isFirst() {
-		return first;
-	}
-
-	public void setFirst(boolean first) {
-		this.first = first;
-	}
-	
-	public int getAge() {
-		return age;
-	}
-
-	public void setFirst(int age) {
-		this.age = age;
-	}
-	
-	public int getTicksSinceLastChild() {
-		return ticksSinceLastChild;
-	}
-
-	public void setTicksSinceLastChild(int ticksSinceLastChild) {
-		this.ticksSinceLastChild = ticksSinceLastChild;
-	}
-	
-	public String getIsFacing() {
-		return isFacing;
-	}
-
-	public void setIsFacing(String isFacing) {
-		this.isFacing = isFacing;
-	}
-	
 }

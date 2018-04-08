@@ -1,4 +1,4 @@
-package helpers;
+package data;
 
 import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
@@ -15,8 +15,6 @@ import static org.lwjgl.opengl.GL11.glOrtho;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
@@ -25,17 +23,13 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 
-import data.Entity;
-import data.OpenSimplexNoise;
-import data.Spawn;
-import data.TileGrid;
-import data.TileType;
+import helpers.Config;
+
 
 public class Startup {
 	
 	private static int width = Config.getWidth();
 	private static int height = Config.getHeight();
-	private static int tileSize = Config.getSize();
 	private static double featureSize = Config.getFeatureSize();
 	
 	public static void createSession() {
@@ -91,11 +85,10 @@ public class Startup {
 		}
     }
 	
-	//If it's the first loop remove all entities that have spawned on mountains or water
+	/*//If it's the first loop remove all entities that have spawned on mountains or water
 	public static void firstTimeCleanUp(TileGrid grid){
-		ArrayList<Entity> entityList = new ArrayList<Entity>();
+		ArrayList<Entity> entityList = Spawn.getEntityList();
 		int i = 0;
-		entityList = Spawn.getEntityList();
 		for (Iterator<Entity> iterator = entityList.iterator(); iterator.hasNext();) {
 			Entity e = iterator.next();
 			int xPos = (int)e.getX()/Config.getSize();
@@ -107,5 +100,5 @@ public class Startup {
 		}
 		System.out.println(i + " entities removed for being on impassible terrain.");
 		Spawn.setEntityList(entityList);
-	}
+	}*/
 }
