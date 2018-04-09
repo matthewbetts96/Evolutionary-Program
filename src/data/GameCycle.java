@@ -1,11 +1,6 @@
 package data;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -25,9 +20,6 @@ public class GameCycle {
 		TileGrid grid = new TileGrid();
 		
 		gameUI = new UI();
-		
-		//Set up stats collection
-		PrintWriter	pw = setupOutput();
 		
 		Spawn spawnEntity = new Spawn();
 		
@@ -52,29 +44,16 @@ public class GameCycle {
 			creatureAI.creatureActions(grid);
 			
 			//Update stats
-			UI.updateStats(pw, grid, gameUI);
+			UI.updateStats(grid, gameUI);
 
 			//Update and sync the display
 			Display.update();
 			Display.sync(60);
 		}
 		//Close the display & printwriter when the loop finishes
-		pw.close();
+		UI.closeYearFileWriter();
 		Display.destroy();
 	}
-	
-	private PrintWriter setupOutput() throws IOException {
-		File file = new File(Config.getOutputFileName());
-		
-		if(!file.exists()){
-			file.createNewFile();
-		}
-		
-		FileWriter fw = new FileWriter(file,true);
-  	  	BufferedWriter bw = new BufferedWriter(fw);
-  	  	PrintWriter pw = new PrintWriter(bw);
-		return pw;
-	} 
 
 	private static void firstTimeCleanUp(TileGrid grid){
 		ArrayList<Entity> entityList = Spawn.getEntityList();

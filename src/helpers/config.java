@@ -12,8 +12,7 @@ public class Config {
 	private static int startMultiplier = 1;
 	private static int noiseWidth = width/size;
 	private static int noiseHeight = height/size;
-	private static String outputFileName = "test.csv";
-	
+
 	public static int getWidth() {
 		return width;
 	}
@@ -38,9 +37,4 @@ public class Config {
 	public static int getNoiseHeight() {
 		return noiseHeight;
 	}
-	public static String getOutputFileName() {
-		return outputFileName;
-	}
-	
-
 }
