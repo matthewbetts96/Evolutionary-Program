@@ -52,23 +52,33 @@ public class UI {
 		
 		Tile tile = grid.GetTile(((int)mouseX/Config.getSize()), ((int)mouseY/Config.getSize()));
 		
-		gameUI.drawText(850, 10, "Tick(s) = " + Clock.ticksSinceGameStart());
+		int year = (int) (Clock.ticksSinceGameStart()/360);
+		int month = (int) (Clock.ticksSinceGameStart() - (year *360))/30;
+		int day = (int) (Clock.ticksSinceGameStart() - (year *360) - (month * 30));
 		
-		gameUI.drawText(850, 30, "X :" + mouseX);
-		gameUI.drawText(850, 50, "Y :" + mouseY);
-		gameUI.drawText(850, 70, "Tile Type :" + tile.getType().getTextureName());
-		gameUI.drawText(850, 90, "Food :" + tile.getCurrentFood());
-		gameUI.drawText(850, 110, "Food Regen :" + tile.getFoodRegen());
+		//so dates won't start at 0
+		year++;
+		month++;
+		day++;
 		
-		gameUI.drawText(820, 150, "Average Attack = " + df2.format(creatureAI.getCumulativeAttack()/entNum));
-		gameUI.drawText(820, 170, "Average Def = " + df2.format(creatureAI.getCumulativeDef()/entNum));
-		gameUI.drawText(820, 190, "Average Speed = " + df2.format(creatureAI.getCumulativeSpeed()/entNum));
-		gameUI.drawText(820, 210, "Average Int = " + df2.format(creatureAI.getCumulativeInt()/entNum));
+		gameUI.drawText(850, 20, "Tick(s) = " + Clock.ticksSinceGameStart());
+		gameUI.drawText(850, 40, "Date: " + day + "/"+ month + "/"+ year);
 		
-		gameUI.drawText(820, 250, "Adult Male = " + df2.format(creatureAI.getAdultMaleNumber()));
-		gameUI.drawText(820, 270, "Adult Female = " + df2.format(creatureAI.getAdultFemaleNumber()));
-		gameUI.drawText(820, 290, "Child Male = " + df2.format(creatureAI.getChildMaleNumber()));
-		gameUI.drawText(820, 310, "Child Female = " + df2.format(creatureAI.getChildFemaleNumber()));
+		gameUI.drawText(850, 220, "X :" + mouseX);
+		gameUI.drawText(850, 240, "Y :" + mouseY);
+		gameUI.drawText(850, 260, "Tile Type :" + tile.getType().getTextureName());
+		gameUI.drawText(850, 280, "Food :" + tile.getCurrentFood());
+		gameUI.drawText(850, 300, "Food Regen :" + tile.getFoodRegen());
+		
+		gameUI.drawText(850, 340, "Avg Attack = " + df2.format(creatureAI.getCumulativeAttack()/entNum));
+		gameUI.drawText(850, 360, "Avg Def = " + df2.format(creatureAI.getCumulativeDef()/entNum));
+		gameUI.drawText(850, 380, "Avg Speed = " + df2.format(creatureAI.getCumulativeSpeed()/entNum));
+		gameUI.drawText(850, 400, "Avg Int = " + df2.format(creatureAI.getCumulativeInt()/entNum));
+		
+		gameUI.drawText(850, 440, "Adult Male = " + df2.format(creatureAI.getAdultMaleNumber()));
+		gameUI.drawText(850, 460, "Adult Female = " + df2.format(creatureAI.getAdultFemaleNumber()));
+		gameUI.drawText(850, 480, "Child Male = " + df2.format(creatureAI.getChildMaleNumber()));
+		gameUI.drawText(850, 500, "Child Female = " + df2.format(creatureAI.getChildFemaleNumber()));
 		
 		//always write everyday for a year
 		daypw.println(Clock.ticksSinceGameStart() + "," 
@@ -118,6 +128,10 @@ public class UI {
 			if(Clock.ticksSinceGameStart() % 3600 == 0) {
 				monthpw.close();
 				monthWriter();
+			} 
+			if(Clock.ticksSinceGameStart() % 36000 == 0) {
+				yearpw.close();
+				yearWriter();
 			}
 		}
 
@@ -140,7 +154,7 @@ public class UI {
 	}
 	
 	private static void dayWriter() throws IOException {
-		File dayfile = new File("results\\" +getFileName() + "-day.csv");
+		File dayfile = new File("results//Year " + getFileName() + "-" + (Integer.parseInt(getFileName())+1) + " - daily logging.csv");
 	  	if(!dayfile.exists()){
 		  	dayfile.createNewFile();
 		}
@@ -151,7 +165,7 @@ public class UI {
 	}
 	
 	private static void monthWriter() throws IOException {
-		File monthfile = new File("results\\" +getFileName() + "-month.csv");
+		File monthfile = new File("results//Year " + getFileName() + "-" + (Integer.parseInt(getFileName())+9) +" - monthly logging.csv");
 	  	if(!monthfile.exists()){
 		  	monthfile.createNewFile();
 		}
@@ -162,7 +176,7 @@ public class UI {
 	}
 	
 	private static void yearWriter() throws IOException {
-		File yearfile = new File("results\\" + getFileName() + "-year.csv");
+		File yearfile = new File("results//Year " + getFileName() + "-" + (Integer.parseInt(getFileName())+99) + " - yearly logging.csv");
 	  	if(!yearfile.exists()){
 	  		yearfile.createNewFile();
 		}
@@ -173,8 +187,10 @@ public class UI {
 	}
 	
 	public static String getFileName() {
-		long time = Clock.ticksSinceGameStart();
-		String fileName = Long.toString(time);
+		
+		int year = (int) (Clock.ticksSinceGameStart()/360);
+		year++;
+		String fileName = String.format("%d",year);
 		return fileName;
 	}
 }

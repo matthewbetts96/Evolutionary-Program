@@ -43,7 +43,7 @@ public class TileGrid {
 	            	map[i][j] = new Tile(i * tileSize, j * tileSize, TileType.Sand);	
 	            } else if(colour > 95){
 	            	map[i][j] = new Tile(i * tileSize, j * tileSize, TileType.Grass);	
-				} else if(colour > 85){
+				} else if(colour > 70){
 					map[i][j] = new Tile(i * tileSize, j * tileSize, TileType.Highlands);	
 	            } else {
 	            	map[i][j] = new Tile(i * tileSize, j * tileSize, TileType.Mountains);	

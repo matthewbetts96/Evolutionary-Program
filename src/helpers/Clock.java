@@ -28,7 +28,7 @@ public class Clock {
 	
 	public static void update() {
 		//fixed delta time to a set value for now
-		d = (float) 0.4;//getDelta();
+		d = (float)getDelta();
 		totalTime += d;
 		ticksSinceGameStart +=1;
 	}
@@ -40,7 +40,6 @@ public class Clock {
 	public static float Multiplier() {
 		return multiplier;
 	}
-	
 	
 	public static long ticksSinceGameStart() {
 		return ticksSinceGameStart;

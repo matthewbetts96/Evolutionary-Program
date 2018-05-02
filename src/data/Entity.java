@@ -14,7 +14,7 @@ import helpers.Config;
 public class Entity {
 	private int width, height, attackVal, defenseVal, intelligence, 
 	maxHunger, currentHunger, hungerDepeletionRate, baseSpeed, age, 
-	ticksSinceLastChild;
+	ticksSinceLastChild, ticksSinceLastInteraction;
 	
 	private float xPosition, yPosition;
 	private Texture texture;
@@ -45,13 +45,14 @@ public class Entity {
 		this.texture = Artist.getPrey();
 		
 		//Misc stats/values
-		this.attackVal = rnd.nextInt(50);
-		this.defenseVal = rnd.nextInt(50);
-		this.intelligence = rnd.nextInt(20) + 5;
+		this.attackVal = rnd.nextInt(10);
+		this.defenseVal = rnd.nextInt(10);
+		this.intelligence = 1;//rnd.nextInt(10) + 5;
 		this.currentHunger = species.getMaxHunger();
 		this.hungerDepeletionRate = 1;
 		this.age = 5400;
 		this.ticksSinceLastChild = 0;
+		this.ticksSinceLastInteraction = 0;
 		this.isDead = false;
 		this.first = true;
 		this.facingDirection = "southeast";//set to southeast as that is what x=1,y=1 movement gives us 
@@ -88,7 +89,7 @@ public class Entity {
 		//Misc stats/values
 		this.attackVal = childStats.get(3);
 		this.defenseVal = childStats.get(4);
-		this.intelligence = childStats.get(5);
+		this.intelligence = 1;//childStats.get(5);
 		if(this.intelligence <= 0) {
 			if(this.intelligence == 0) {
 				this.intelligence = 1;
@@ -97,10 +98,11 @@ public class Entity {
 			}
 		}
 		
-		this.currentHunger = 50;
+		this.currentHunger = 20;
 		this.hungerDepeletionRate = 1;
 		this.age = 0;
 		this.ticksSinceLastChild = 0;
+		this.ticksSinceLastInteraction = 0;
 		this.isDead = false;
 		this.first = true;
 		this.facingDirection = "southeast";//set to southeast as that is what x=1,y=1 movement gives us 
@@ -292,4 +294,14 @@ public class Entity {
 	public boolean isMale() {
 		return isMale;
 	}
+
+	public int getTicksSinceLastInteraction() {
+		return ticksSinceLastInteraction;
+	}
+
+	public void setTicksSinceLastInteraction(int ticksSinceLastInteraction) {
+		this.ticksSinceLastInteraction = ticksSinceLastInteraction;
+	}
+	
+	
 }

@@ -2,11 +2,11 @@ package data;
 
 public enum TileType {
 	
-	Grass("grass", true, 100, 5), 
-	Dirt("dirt", true, 100, 4), 
+	Grass("grass", true, 200, 4), 
+	Dirt("dirt", true, 200, 3), 
 	Water("water", false, 0, 0), 
-	Sand("sand", true, 60, 2), 
-	Highlands("highland", true, 40, 3), 
+	Sand("sand", true, 80, 3), 
+	Highlands("highland", true, 100, 2), 
 	Mountains("mountain", false, 0, 0);
 	
 	String textureName;

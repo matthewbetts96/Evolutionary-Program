@@ -36,6 +36,12 @@ public class creatureAI {
 			int xPos = (int)e.getxPosition()/Config.getSize();
 			int yPos = (int)e.getyPosition()/Config.getSize();
 			
+			
+			//Regardless of the entities int, do a movement calc on the first tick
+			if(e.isFirst()) {
+				movement(grid, e, xPos, yPos);
+			}
+			
 			//Moving
 			try {
 				movement(grid, e, xPos, yPos);
@@ -44,7 +50,7 @@ public class creatureAI {
 			}
 			
 			//Loss of food through living
-			e.setCurrentHunger(e.getCurrentHunger() - 2);
+			e.setCurrentHunger(e.getCurrentHunger() - 1);
 
 			//Eating and food requirements
 			eat(grid, e, xPos, yPos);
@@ -74,16 +80,16 @@ public class creatureAI {
 		if(grid.GetTile(xPos, yPos).isTraversable() != false) {
 			if(Clock.ticksSinceGameStart() % e.getIntelligence() == 0) {
 				setNewDirection(grid, e, xPos, yPos);
-				
-				//Energy used in calculating new direction
-				if(e.getBaseSpeed() < 0) {
-					e.setCurrentHunger(e.getCurrentHunger() - (-1*e.getBaseSpeed()));
-				} else {
-					e.setCurrentHunger(e.getCurrentHunger() - (1*e.getBaseSpeed()));
-				}
 			}
 		} else {
 			reverse(e);
+		}
+		
+		//Energy used in moving
+		if(e.getBaseSpeed() < 0) {
+			e.setCurrentHunger(e.getCurrentHunger() - (int)((-1*e.getBaseSpeed()/2)));
+		} else {
+			e.setCurrentHunger(e.getCurrentHunger() - (int)((1*e.getBaseSpeed()/2)));
 		}
 	}
 	
@@ -122,6 +128,7 @@ public class creatureAI {
 		
 		e.setFacingDirection(surroundingTiles[0].getDirection());
 		double origSpeed = e.getBaseSpeed();
+		//TODO revert to pythagoras speed settings 
 		switch(largestValue) {
 			case "north":
 				e.setxSpeed(0);
@@ -203,12 +210,16 @@ public class creatureAI {
 	private static void birthday(Entity e) {
 		e.setAge(e.getAge() + 1);
 		
+		e.setTicksSinceLastInteraction(e.getTicksSinceLastInteraction()+1);
+		
 		
 		//TODO FIX THIS
 		//Only females are limited to having children all the time
-		//if(e.isMale() == false) {
+		if(e.isMale() == false) {
 			e.setTicksSinceLastChild(e.getTicksSinceLastChild() + 1);
-		//}
+		} else {
+			e.setTicksSinceLastChild(10000);
+		}
 		
 		//entity lifespan = 50 years (18000 ticks)
 		if(e.getAge() > 18000) {
@@ -219,15 +230,14 @@ public class creatureAI {
 	//Entities eating from tiles
 	private static void eat(TileGrid grid, Entity e, int xPos, int yPos) {
 		//if hunger above 90%, don't eat
-		if(e.getCurrentHunger() <= e.getMaxHunger()*0.90) {
+		if(e.getCurrentHunger() < e.getMaxHunger()*0.9) {
 			int foodOnTile = grid.GetTile(xPos, yPos).getCurrentFood();
 			//if food is less than 10 on the tile
 			if(foodOnTile <= 5) {
+				e.setCurrentHunger(e.getCurrentHunger() + foodOnTile);
 				grid.GetTile(xPos, yPos).setCurrentFood(0);
-				foodOnTile = e.getCurrentHunger() + foodOnTile;
-				e.setCurrentHunger(foodOnTile);
 			} else {
-				//remove 10 food from the tile, add 10 to the creature
+				//remove 5 food from the tile, add 5 to the creature
 				foodOnTile = foodOnTile - 5;
 				grid.GetTile(xPos, yPos).setCurrentFood(foodOnTile);
 				e.setCurrentHunger(e.getCurrentHunger() + 5);

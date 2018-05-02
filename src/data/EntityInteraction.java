@@ -8,22 +8,59 @@ public class EntityInteraction {
 	
 	public static void interact(TileGrid grid, int i, int j) {
 		if(grid.GetTile(i, j).getCreaturesOnTile().size() == 2) {
-			twoEntityInteraction(grid, i, j);
+			Entity e1 = grid.GetTile(i, j).getCreaturesOnTile().get(0);
+			Entity e2 = grid.GetTile(i, j).getCreaturesOnTile().get(1);
+			twoEntityInteraction(grid, i, j, e1, e2);
+			twoEntityInteraction(grid, i, j, e2, e1);
 		} else {
-			//TODO
+			int numberOnTile = grid.GetTile(i, j).getCreaturesOnTile().size();
+			
+			for(int counter = 0; counter < numberOnTile; counter++) {
+				int thisEntity = 0;
+				Entity focus = grid.GetTile(i, j).getCreaturesOnTile().get(thisEntity);
+				
+				//Where we store what is the furthest away 
+				int closestEntNumber = 0;
+				double closestEntDistance = 100000;
+				
+				//if it is not itself then enter loop
+				if(thisEntity != counter) {
+					Entity possibleTarget = grid.GetTile(i, j).getCreaturesOnTile().get(counter);
+					double distance = getEuclidean(focus,possibleTarget);
+					
+					if(distance > closestEntDistance) {
+						closestEntNumber = counter;
+						closestEntDistance = distance;
+					}
+				}
+				
+				//After looping through all possible combinations of this entity, we now know which one is the closest 
+				twoEntityInteraction(grid, i, j, focus, grid.GetTile(i, j).getCreaturesOnTile().get(closestEntNumber));
+			}
 		}
 	}
 	
-	private static void twoEntityInteraction(TileGrid grid, int i, int j) {
-		Entity e1 = grid.GetTile(i, j).getCreaturesOnTile().get(0);
-		Entity e2 = grid.GetTile(i, j).getCreaturesOnTile().get(1);
+	private static double getEuclidean(Entity e1, Entity e2) {
+		float e1x = e1.getxPosition();
+		float e1y = e1.getyPosition();
+		float e2x = e2.getxPosition();
+		float e2y = e2.getyPosition();
 		
+		float x = e1x - e2x;
+		float y = e1y - e2y;
+		
+		float distance = (float) Math.sqrt((Math.pow(x,2)) + (Math.pow(y,2)));
+		
+		return distance;
+	}
+
+	private static void twoEntityInteraction(TileGrid grid, int i, int j, Entity e1, Entity e2) {
 		//Ie true if they one is male and the other female
 		if(e1.isMale() != e2.isMale()) {
 			//next we do a check to see if both are eligible 
-			if(e1.getTicksSinceLastChild() >= 360 && e2.getTicksSinceLastChild() >= 360) {
+			if(e1.getTicksSinceLastChild() >= 180 && e2.getTicksSinceLastChild() >= 180) {
 				//The last check is to see if they have the requirements 
-				if(e1.getCurrentHunger() >= 30 && e2.getCurrentHunger() >= 30) {
+				if(e1.getCurrentHunger() >= 20 && e2.getCurrentHunger() >= 20) {
 					//This last check is to exclude 'children', we consider a child to be less than 5400 ticks (15 years)
 					if(e1.getAge() >= 5400 && e2.getAge() >= 5400) {
 						//If we get to this stage, then we can create a new offspring 
@@ -40,8 +77,8 @@ public class EntityInteraction {
 						e2.setTicksSinceLastChild(0);
 						
 						//remove some food as energy spent creating the offspring
-						e1.setCurrentHunger(e1.getCurrentHunger() - 30);
-						e2.setCurrentHunger(e2.getCurrentHunger() - 30);
+						e1.setCurrentHunger(e1.getCurrentHunger() - 10);
+						e2.setCurrentHunger(e2.getCurrentHunger() - 10);
 						
 						System.out.println("A child was born!");
 					}
@@ -52,8 +89,13 @@ public class EntityInteraction {
 			//We'll just assume that females won't
 			//We're also going to exclude 'children' too
 			if(e1.getAge() >= 5400 && e2.getAge() >= 5400) {
-				creatureAttack(e1, e2);
-				creatureAttack(e2, e1);
+				//The very final check is to stop entities fighting to the death as soon as they meet
+				if(e1.getTicksSinceLastInteraction() > 30 || e2.getTicksSinceLastInteraction() > 30) {
+					creatureAttack(e1, e2);
+					//reset interaction timer
+					e1.setTicksSinceLastInteraction(0);
+					e2.setTicksSinceLastInteraction(0);
+				}
 			}
 		}
 	}
@@ -105,7 +147,7 @@ public class EntityInteraction {
 	private static void creatureAttack(Entity att, Entity def) {
 		//Getting all relevant variables
 		int e1Att = att.getAttackVal();
-		int e2Def = def.getAttackVal();
+		int e2Def = def.getDefenseVal();
 
 		//As we don't want to deal with negatives, set them to 0
 		if(e1Att > 0) {
